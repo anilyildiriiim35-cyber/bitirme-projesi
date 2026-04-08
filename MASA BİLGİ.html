@@ -1,122 +1,203 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Masa Seçimi</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masa Seçimi | Urban POS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-body { background: linear-gradient(135deg,#0f0f0f,#1c1c1c); color:white; }
+    <style>
+        body { 
+            background: linear-gradient(135deg, #0f0f0f, #1c1c1c); 
+            color: white; 
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-.masa-card {
-  background:#1e1e1e; border-radius:14px; padding:25px; margin:10px;
-  cursor:pointer; transition:.3s; text-align:center;
-}
-.masa-card:hover { transform:scale(1.05); box-shadow:0 0 15px #ffc107; }
+        .masa-card {
+            background: #1e1e1e; 
+            border-radius: 14px; 
+            padding: 25px; 
+            margin: 10px;
+            cursor: pointer; 
+            transition: .3s; 
+            text-align: center;
+            position: relative;
+            border: 2px solid transparent;
+        }
 
-.masa-bos { border-left:6px solid #28a745; }
-.masa-dolu { border-left:6px solid #dc3545; }
+        .masa-card:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.3); 
+        }
 
-.masa-secili { border:2px solid #ffc107 !important; box-shadow:0 0 20px #ffc107; }
+        .masa-bos { border-left: 6px solid #28a745; }
+        .masa-dolu { border-left: 6px solid #dc3545; }
 
-.tutar { font-size:18px; font-weight:bold; color:#ffc107; }
+        .masa-secili { 
+            border: 2px solid #ffc107 !important; 
+            box-shadow: 0 0 20px #ffc107; 
+        }
 
-.siparis-panel {
-  position:fixed; top:20px; right:-320px; width:300px; height:90%;
-  background:#1a1a1a; border-left:3px solid #ffc107;
-  padding:15px; transition:.3s; overflow-y:auto;
-}
-.siparis-panel.aktif { right:0; }
+        .tutar { 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #ffc107; 
+            margin-top: 10px;
+        }
 
-.btn-hero {
-  background:linear-gradient(90deg,#ffc107,#ff9800);
-  color:black; font-weight:bold; padding:12px 25px;
-  border-radius:12px; border:none;
-}
-</style>
+        /* Yeni eklenen rezervasyon yazısı stili */
+        .rezervasyon-yazi {
+            color: #00ecff;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-transform: uppercase;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        .siparis-panel {
+            position: fixed; 
+            top: 20px; 
+            right: -320px; 
+            width: 300px; 
+            height: 90%;
+            background: #1a1a1a; 
+            border-left: 3px solid #ffc107;
+            padding: 15px; 
+            transition: .3s; 
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .siparis-panel.aktif { right: 0; }
+
+        .btn-hero {
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            color: black; 
+            font-weight: bold; 
+            padding: 12px 35px;
+            border-radius: 12px; 
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-hero:disabled {
+            background: #444;
+            color: #888;
+        }
+
+        .btn-hero:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+        }
+    </style>
 </head>
 
 <body class="p-4">
 
 <div class="container text-center">
-  <h2 class="mb-4">Masa Seçiniz</h2>
-  <div class="row" id="masaAlani"></div>
-  <button id="secBtn" class="btn btn-hero mt-4" disabled>Seçilen Masayı Onayla</button>
+    <h2 class="mb-4">Masa Seçiniz</h2>
+    <div class="row" id="masaAlani"></div>
+    <button id="secBtn" class="btn btn-hero mt-4" disabled>Seçilen Masayı Onayla</button>
 </div>
 
 <div class="siparis-panel" id="siparisPanel">
-  <h5 id="panelBaslik">Siparişler</h5>
-  <div id="siparisIcerik"></div>
+    <h5 id="panelBaslik" class="text-warning">Siparişler</h5>
+    <hr class="border-secondary">
+    <div id="siparisIcerik"></div>
 </div>
 
 <script>
-let secilenMasa=null;
-const masaAlani=document.getElementById("masaAlani");
-const panel=document.getElementById("siparisPanel");
-const panelIcerik=document.getElementById("siparisIcerik");
-const panelBaslik=document.getElementById("panelBaslik");
+    let secilenMasa = null;
+    const masaAlani = document.getElementById("masaAlani");
+    const panel = document.getElementById("siparisPanel");
+    const panelIcerik = document.getElementById("siparisIcerik");
+    const panelBaslik = document.getElementById("panelBaslik");
+    const secBtn = document.getElementById("secBtn");
 
-for(let i=1;i<=12;i++){
+    // Masaları Oluşturma
+    for (let i = 1; i <= 12; i++) {
+        let masaTutar = localStorage.getItem("masa_" + i + "_tutar");
+        let siparisler = JSON.parse(localStorage.getItem("masa_" + i + "_siparisler")) || [];
+        let durum = masaTutar && parseFloat(masaTutar) > 0 ? "dolu" : "bos";
 
-  let masaTutar=localStorage.getItem("masa_"+i+"_tutar");
-  let siparisler=JSON.parse(localStorage.getItem("masa_"+i+"_siparisler"))||[];
-  let durum=masaTutar?"dolu":"bos";
+        let col = document.createElement("div");
+        col.className = "col-md-3 mb-3";
 
-  let col=document.createElement("div");
-  col.className="col-md-3";
+        col.innerHTML = `
+            <div class="masa-card ${durum === "bos" ? "masa-bos" : "masa-dolu"}" id="card-masa-${i}">
+                <h4 class="mb-1">Masa ${i}</h4>
+                <p class="small text-secondary mb-0">${durum === "bos" ? "Müsait" : "Dolu"}</p>
+                ${durum === "dolu" ? `<div class="tutar">${masaTutar} ₺</div>` : ""}
+            </div>
+        `;
 
-  col.innerHTML=`
-    <div class="masa-card ${durum==="bos"?"masa-bos":"masa-dolu"}">
-      <h4>Masa ${i}</h4>
-      <p>${durum==="bos"?"Boş":"Dolu"}</p>
-      ${durum==="dolu"?`<div class="tutar">${masaTutar} ₺</div>`:""}
-    </div>
-  `;
+        masaAlani.appendChild(col);
+        const card = col.querySelector(".masa-card");
 
-  masaAlani.appendChild(col);
-  const card=col.querySelector(".masa-card");
-
-  card.addEventListener("click",()=>{
-    document.querySelectorAll(".masa-card").forEach(m=>m.classList.remove("masa-secili"));
-    card.classList.add("masa-secili");
-    secilenMasa=i;
-    document.getElementById("secBtn").disabled=false;
-  });
-
-  card.addEventListener("mouseenter",()=>{
-    if(durum==="dolu"){
-      panel.classList.add("aktif");
-      panelBaslik.innerText="Masa "+i+" Siparişleri";
-
-      if(siparisler.length===0){
-        panelIcerik.innerHTML="<p>Sipariş yok</p>";
-      }else{
-        panelIcerik.innerHTML="";
-        siparisler.forEach(s=>{
-          panelIcerik.innerHTML+=`<div>${s.ad} - ${s.fiyat} ₺</div>`;
+        // Tıklama Olayı
+        card.addEventListener("click", () => {
+            document.querySelectorAll(".masa-card").forEach(m => m.classList.remove("masa-secili"));
+            card.classList.add("masa-secili");
+            secilenMasa = i;
+            secBtn.disabled = false;
         });
-      }
+
+        // Üzerine Gelince Sipariş Detayı Göster (Dolu Masalar İçin)
+        card.addEventListener("mouseenter", () => {
+            if (durum === "dolu") {
+                panel.classList.add("aktif");
+                panelBaslik.innerText = "Masa " + i + " Detayı";
+                panelIcerik.innerHTML = "";
+                siparisler.forEach(s => {
+                    panelIcerik.innerHTML += `<div class="d-flex justify-content-between border-bottom border-secondary py-1">
+                        <span>${s.ad}</span> <span>${s.fiyat} ₺</span>
+                    </div>`;
+                });
+            }
+        });
+
+        card.addEventListener("mouseleave", () => panel.classList.remove("aktif"));
     }
-  });
-  
 
-  card.addEventListener("mouseleave",()=>panel.classList.remove("aktif"));
-}
+    // Onay Butonu İşlemi
+    secBtn.addEventListener("click", function() {
+        if (secilenMasa) {
+            // 1. LocalStorage Ayarları
+            let mevcutTutar = localStorage.getItem("masa_" + secilenMasa + "_tutar");
+            if (!mevcutTutar) {
+                localStorage.setItem("masa_" + secilenMasa + "_tutar", "0");
+                localStorage.setItem("masa_" + secilenMasa + "_siparisler", JSON.stringify([]));
+            }
+            localStorage.setItem("aktifMasa", secilenMasa);
 
-document.getElementById("secBtn").addEventListener("click",()=>{
-  if(secilenMasa){
+            // 2. Görsel Bildirim Ekleme (İstediğin Kısım)
+            const seciliKart = document.querySelector(".masa-secili");
+            
+            // Eğer zaten yazı yoksa ekle
+            if (!seciliKart.querySelector(".rezervasyon-yazi")) {
+                const uyari = document.createElement("div");
+                uyari.className = "rezervasyon-yazi";
+                uyari.innerHTML = "✓ Rezervasyon Edilmiştir";
+                seciliKart.appendChild(uyari);
+            }
 
-    let mevcutTutar=localStorage.getItem("masa_"+secilenMasa+"_tutar");
+            // Butonu kilitle ve süreci başlat
+            secBtn.disabled = true;
+            secBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Yönlendiriliyor...`;
 
-    if(!mevcutTutar){
-      localStorage.setItem("masa_"+secilenMasa+"_tutar",0);
-      localStorage.setItem("masa_"+secilenMasa+"_siparisler",JSON.stringify([]));
-    }
-
-    localStorage.setItem("aktifMasa",secilenMasa);
-    window.location.href="menu.html";
-  }
-});
+            // 3. 1.5 Saniye Bekle ve Menu.html'e Git
+            setTimeout(() => {
+                window.location.href = "siparis.html";
+            }, 1500);
+        }
+    });
 </script>
 
 </body>
