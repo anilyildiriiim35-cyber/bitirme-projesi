@@ -50,11 +50,11 @@
         let toplamCiro = 0;
         tablo.innerHTML = "";
 
-        // En son yapılan ödemeyi en üstte göster (Reverse)
+        
         [...rapor].reverse().forEach(islem => {
             toplamCiro += islem.tutar;
             
-            // Ödeme türüne göre renk belirleme
+            
             let turRengi = islem.tur === 'NAKİT' ? 'text-nakit' : 'text-kart';
             let turYazisi = islem.tur ? islem.tur : "-";
 

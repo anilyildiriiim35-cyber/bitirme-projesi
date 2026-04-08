@@ -7,7 +7,7 @@
     <style>
         body { background:#0f0f0f; color:#e0e0e0; font-family: 'Segoe UI', sans-serif; }
         
-        /* Kart Tasarımları */
+        
         .card { background:#252525; border: 1px solid #333; border-radius:12px; cursor:pointer; color: white; transition: .2s; }
         .card:hover { border-color: #ffc107; transform: scale(1.02); }
         
@@ -15,7 +15,7 @@
         .yemek-adi { color: #ffffff; font-weight: 800; text-transform: uppercase; }
         .fiyat-text { color: #ffc107; font-weight: bold; }
         
-        /* Butonlar */
+        
         .btn-ekle { background:#ffc107; color:black; font-weight:bold; border: none; width: 100%; }
         .btn-ekle:hover { background: #e0a800; }
         
@@ -37,7 +37,7 @@
         }
         .btn-rapor:hover { background: #dc3545; color: white; }
 
-        /* Ödeme Modalı (Şık Tasarım) */
+        
         .modal-content { background: #1b1b1b; border: 1px solid #ffc107; color: white; border-radius: 15px; }
         .btn-payment-type {
             padding: 20px;
@@ -135,7 +135,7 @@
   {ad:"ACILI EZME", fiyat:800},
     ];
 
-    // Masaları Oluştur
+    
     const masaAlani = document.getElementById("masaAlani");
     for(let i=1; i<=12; i++){
         let col = document.createElement("div");
@@ -149,7 +149,7 @@
         });
     }
 
-    // Menü Oluştur
+
     const menuAlani = document.getElementById("menuAlani");
     menu.forEach(u => {
         menuAlani.innerHTML += `<div class="col-md-3 mb-4"><div class="card p-3 text-center"><div class="yemek-adi">${u.ad}</div><div class="fiyat-text mb-2">${u.fiyat} ₺</div><button class="btn btn-ekle btn-sm" onclick="urunEkle('${u.ad}', ${u.fiyat})">EKLE +</button></div></div>`;
@@ -177,7 +177,7 @@
         siparisleriGoster();
     }
 
-    // Ödeme Penceresini Açan Fonksiyon
+    
     function odemeOnayiAc() {
         if(!aktifMasa) { alert("Masa seçili değil!"); return; }
         let tutar = parseFloat(localStorage.getItem("masa_" + aktifMasa + "_tutar") || 0);
@@ -188,17 +188,17 @@
         paymentModal.show();
     }
 
-    // Asıl Ödemeyi Yapan Fonksiyon
+    
     function odemeYap(tur){
         let tutar = parseFloat(localStorage.getItem("masa_" + aktifMasa + "_tutar") || 0);
         
-        // RAPOR KAYDI (TÜRÜYLE BİRLİKTE)
+        
         let rapor = JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
         let simdi = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
         rapor.push({ saat: simdi, masa: aktifMasa, tutar: tutar, tur: tur });
         localStorage.setItem("gun_sonu_raporu", JSON.stringify(rapor));
 
-        // TEMİZLE
+    
         localStorage.removeItem("masa_" + aktifMasa + "_tutar");
         localStorage.removeItem("masa_" + aktifMasa + "_siparisler");
         
