@@ -71,6 +71,18 @@
             font-weight: bold;
             margin-bottom: 20px;
         }
+
+        .badge-authority {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            background-color: #ffc107;
+            color: black;
+            border-radius: 8px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -97,24 +109,19 @@
         <button class="btn btn-urban" onclick="girisYap()">Giriş Yap</button>
     </div>
 
-    <div id="redirectBox" class="card-box hidden text-center">
-        <div class="logo">Urban POS</div>
-        <div class="success-text">✓ Giriş Başarılı</div>
-        <p id="onayMesaji"></p>
-        <button class="btn btn-urban" onclick="anaSayfayaGit()">Ana Sayfaya Git"/button>
-    </div>
-
     <div id="mainBox" class="card-box hidden text-center">
-        <div class="logo">Panel</div>
+        <div class="logo">Urban Panel</div>
         <h3 id="hosgeldin"></h3>
-        <p id="rolBilgi" class="badge bg-warning text-dark"></p>
+        
+        <div id="rolBilgi" class="badge-authority">YETKİ: -</div>
+        
         <hr class="border-secondary">
-        <p></p>
-        <button class="btn btn-outline-danger w-100 mt-3" onclick="cikisYap()">Güvenli Çıkış</button>
+            <p class="success-text">Başarıyla giriş yaptınız!</p>
+
+        <button class="btn btn-urban mt-3" onclick="cikisYap()">Güvenli Çıkış</button>
     </div>
 
     <script>
-        
         const kullanicilar = {
             mudur: [{ username: "admin", password: "admin123" }],
             personel: [
@@ -144,39 +151,45 @@
                 sessionStorage.setItem("aktifRol", rol);
 
                 
-                document.getElementById("loginBox").classList.add("hidden");
-                document.getElementById("redirectBox").classList.remove("hidden");
-                document.getElementById("onayMesaji").innerText = "Sayın " + username + ", sisteme yönlendiriliyorsunuz.";
+                paneliGoster(username, rol);
             } else {
                 alert("Hatalı kullanıcı adı veya şifre!");
             }
         }
 
-        function anaSayfayaGit() {
+        function paneliGoster(username, rol) {
             
-            if (sessionStorage.getItem("oturumAcik") !== "true") {
-                alert("Yetkisiz erişim!");
-                cikisYap();
-                return;
-            }
-
-            document.getElementById("redirectBox").classList.add("hidden");
+            document.getElementById("loginBox").classList.add("hidden");
             document.getElementById("mainBox").classList.remove("hidden");
 
-            document.getElementById("hosgeldin").innerText = "Hoş geldin, " + sessionStorage.getItem("aktifKullanici");
-            document.getElementById("rolBilgi").innerText = "Yetki: " + sessionStorage.getItem("aktifRol").toUpperCase();
+            
+            document.getElementById("hosgeldin").innerText = "Hoş geldin, " + username;
+            
+            
+            let yetkiText = "";
+            if(rol === "mudur") yetkiText = "MÜDÜR";
+            else if(rol === "personel") yetkiText = "PERSONEL";
+            else yetkiText = "ÇALIŞAN";
+
+            document.getElementById("rolBilgi").innerText = "YETKİ: " + yetkiText;
         }
 
         function cikisYap() {
             sessionStorage.clear(); 
-            location.reload(); 
+            
+            document.getElementById("mainBox").classList.add("hidden");
+            document.getElementById("loginBox").classList.remove("hidden");
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+            document.getElementById("rol").value = "";
         }
 
         
         window.onload = function() {
             if (sessionStorage.getItem("oturumAcik") === "true") {
-                
-                
+                let u = sessionStorage.getItem("aktifKullanici");
+                let r = sessionStorage.getItem("aktifRol");
+                paneliGoster(u, r);
             }
         };
     </script>
