@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Urban POS</title>
+    <title>Urban POS - Yönetim</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -52,36 +52,41 @@
             color: black;
             font-weight: bold;
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 10px;
             transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 8px;
         }
 
         .btn-urban:hover {
             background: #e0a800;
             transform: translateY(-2px);
+            color: black;
         }
 
         .hidden {
             display: none !important;
         }
 
-        .success-text {
-            color: #28a745;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
         .badge-authority {
             display: block;
             width: 100%;
             padding: 10px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-bottom: 15px;
-            background-color: #ffc107;
-            color: black;
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border: 1px solid #ffc107;
             border-radius: 8px;
             font-weight: bold;
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -100,99 +105,104 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Kullanıcı Adı</label>
-            <input id="username" type="text" class="form-control">
+            <input id="username" type="text" class="form-control" placeholder="Kullanıcı adı">
         </div>
         <div class="mb-3">
             <label class="form-label">Şifre</label>
-            <input id="password" type="password" class="form-control">
+            <input id="password" type="password" class="form-control" placeholder="****">
         </div>
-        <button class="btn btn-urban" onclick="girisYap()">Giriş Yap</button>
+        <button class="btn btn-urban" onclick="girisYap()">Sisteme Giriş Yap</button>
     </div>
 
     <div id="mainBox" class="card-box hidden text-center">
         <div class="logo">Urban Panel</div>
-        <h3 id="hosgeldin"></h3>
         
-        <div id="rolBilgi" class="badge-authority">YETKİ: -</div>
+        <button id="rolButonArayuz" class="btn btn-urban mb-3" style="cursor: default;">
+            Giriş Türü: Belirlenmedi
+        </button>
+
+        <div id="kullaniciSelam" class="status-text">Oturum açıldı.</div>
         
         <hr class="border-secondary">
-            <p class="success-text">Başarıyla giriş yaptınız!</p>
 
-        <button class="btn btn-urban mt-3" onclick="cikisYap()">Güvenli Çıkış</button>
+        <button id="btnGunSonu" class="btn btn-danger w-100 mb-2 hidden" style="font-weight: bold;">
+            Gün Sonu Raporu Al
+        </button>
+
+        <a href="ANASAYFA.html" class="btn btn-outline-warning w-100 mb-2">
+            Satış Ekranına Geç
+        </a>
+
+        <button class="btn btn-link text-secondary text-decoration-none mt-3" onclick="cikisYap()">
+            Güvenli Çıkış Yap
+        </button>
     </div>
 
     <script>
-        const kullanicilar = {
-            mudur: [{ username: "admin", password: "admin123" }],
-            personel: [
-                { username: "ali", password: "1234" },
-                { username: "ayse", password: "1234" }
-            ],
-            calisan: [{ username: "mehmet", password: "0000" }]
+        
+        const veritabani = {
+            mudur: [{ username: "admin", password: "123" }],
+            personel: [{ username: "ali", password: "123" }],
+            calisan: [{ username: "can", password: "123" }]
         };
 
         function girisYap() {
-            let username = document.getElementById("username").value;
-            let password = document.getElementById("password").value;
-            let rol = document.getElementById("rol").value;
+            const u = document.getElementById("username").value;
+            const p = document.getElementById("password").value;
+            const r = document.getElementById("rol").value;
 
-            if (rol === "") {
-                alert("Lütfen bir rol seçiniz!");
-                return;
-            }
+            if (!r) { alert("Lütfen rol seçin!"); return; }
 
-            let liste = kullanicilar[rol];
-            let kullanici = liste.find(k => k.username === username && k.password === password);
+            const kullanici = veritabani[r].find(k => k.username === u && k.password === p);
 
             if (kullanici) {
                 
-                sessionStorage.setItem("oturumAcik", "true");
-                sessionStorage.setItem("aktifKullanici", username);
-                sessionStorage.setItem("aktifRol", rol);
+                sessionStorage.setItem("oturum", "true");
+                sessionStorage.setItem("aktifRol", r);
+                sessionStorage.setItem("aktifAd", u);
 
-                
-                paneliGoster(username, rol);
+                arayuzuGuncelle(u, r);
             } else {
-                alert("Hatalı kullanıcı adı veya şifre!");
+                alert("Bilgiler hatalı!");
             }
         }
 
-        function paneliGoster(username, rol) {
+        function arayuzuGuncelle(ad, rol) {
             
             document.getElementById("loginBox").classList.add("hidden");
             document.getElementById("mainBox").classList.remove("hidden");
 
             
-            document.getElementById("hosgeldin").innerText = "Hoş geldin, " + username;
-            
-            
-            let yetkiText = "";
-            if(rol === "mudur") yetkiText = "MÜDÜR";
-            else if(rol === "personel") yetkiText = "PERSONEL";
-            else yetkiText = "ÇALIŞAN";
+            document.getElementById("kullaniciSelam").innerText = "Hoş geldin, " + ad.toUpperCase();
 
-            document.getElementById("rolBilgi").innerText = "YETKİ: " + yetkiText;
+            
+            const rolButon = document.getElementById("rolButonArayuz");
+            if(rol === "mudur") {
+                rolButon.innerText = "MÜDÜR GİRİŞİ YAPILDI";
+                rolButon.style.background = "#ffc107";
+                
+                document.getElementById("btnGunSonu").classList.remove("hidden");
+            } else if(rol === "personel") {
+                rolButon.innerText = "PERSONEL GİRİŞİ YAPILDI";
+                rolButon.style.background = "#0dcaf0"; 
+                document.getElementById("btnGunSonu").classList.add("hidden");
+            } else {
+                rolButon.innerText = "ÇALIŞAN GİRİŞİ YAPILDI";
+                rolButon.style.background = "#f8f9fa"; 
+                document.getElementById("btnGunSonu").classList.add("hidden");
+            }
         }
 
         function cikisYap() {
-            sessionStorage.clear(); 
-            
-            document.getElementById("mainBox").classList.add("hidden");
-            document.getElementById("loginBox").classList.remove("hidden");
-            document.getElementById("username").value = "";
-            document.getElementById("password").value = "";
-            document.getElementById("rol").value = "";
+            sessionStorage.clear();
+            location.reload(); 
         }
 
-        
         window.onload = function() {
-            if (sessionStorage.getItem("oturumAcik") === "true") {
-                let u = sessionStorage.getItem("aktifKullanici");
-                let r = sessionStorage.getItem("aktifRol");
-                paneliGoster(u, r);
+            if (sessionStorage.getItem("oturum") === "true") {
+                arayuzuGuncelle(sessionStorage.getItem("aktifAd"), sessionStorage.getItem("aktifRol"));
             }
         };
     </script>
-
 </body>
 </html>
