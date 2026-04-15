@@ -2,82 +2,168 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Urban POS - Gün Sonu Raporu</title>
+    <title>Urban POS - Gün Sonu Raporu & Analiz</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background:#0f0f0f; color:white; padding: 40px; }
-        .report-card { background:#1a1a1a; border-radius:15px; padding:30px; border: 1px solid #ffc107; }
+        .report-card { background:#1a1a1a; border-radius:15px; padding:30px; border: 1px solid #ffc107; margin-bottom: 20px; }
+        .analiz-card { background:#222; border-radius:12px; padding:20px; border-left: 5px solid #ffc107; transition: 0.3s; }
+        .analiz-card:hover { transform: translateY(-5px); background: #282828; }
         .table-dark { --bs-table-bg: #222; }
-        .total-box { font-size: 2rem; color: #28a745; font-weight: bold; }
-        /* Ödeme türü için eklenen minimal stil */
+        .total-box { font-size: 1.8rem; color: #28a745; font-weight: bold; }
         .tur-metin { font-size: 0.85rem; font-weight: bold; text-transform: uppercase; }
         .text-nakit { color: #28a745; }
         .text-kart { color: #0d6efd; }
+        .form-control-dark { background: #333; border: 1px solid #444; color: white; }
+        .form-control-dark:focus { background: #444; border-color: #ffc107; color: white; box-shadow: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="report-card">
-        <h2 class="text-warning mb-4">Gün Sonu Raporu</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-warning mb-0">Gün Sonu Raporu</h2>
+            <div class="d-flex gap-2">
+                <input type="date" id="tarihSecici" class="form-control form-control-dark">
+                <button class="btn btn-outline-warning" onclick="tariheGoreFiltrele()">Raporu Getir</button>
+            </div>
+        </div>
+
         <table class="table table-dark table-hover">
             <thead>
                 <tr>
                     <th>İşlem Saati</th>
                     <th>Masa Bilgisi</th>
-                    <th>Ödeme Türü</th> <th>Tahsil Edilen Tutar</th>
+                    <th>Ödeme Türü</th> 
+                    <th>Tahsil Edilen Tutar</th>
                 </tr>
             </thead>
             <tbody id="raporTablosu"></tbody>
         </table>
         
         <div class="mt-4 p-3 border-top border-secondary d-flex justify-content-between align-items-center">
-            <h4>Toplam Günlük Ciro:</h4>
+            <h4>Seçili Gün Cirosu:</h4>
             <div id="toplamCiro" class="total-box">0 ₺</div>
         </div>
+    </div>
 
-        <div class="mt-5">
-            <button class="btn btn-secondary" onclick="window.location.href='index.html'">Geri Dön</button>
-            <button class="btn btn-danger float-end" onclick="temizle()">Yeni Güne Başla (Sıfırla)</button>
+    <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+            <div class="analiz-card">
+                <h6 class="text-secondary text-uppercase">En Çok Satılan Ürün</h6>
+                <div class="d-flex align-items-center mt-2">
+                    <span class="fs-2 me-3">🔥</span>
+                    <div>
+                        <h3 id="enCokSatanUrun" class="mb-0 text-white">Veri Yok</h3>
+                        <small id="enCokSatanAdet" class="text-warning">0 adet satıldı</small>
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="col-md-6 mb-3">
+            <div class="analiz-card">
+                <h6 class="text-secondary text-uppercase">Ödeme Yöntemi Dağılımı</h6>
+                <div class="mt-2">
+                    <div class="progress" style="height: 10px; background: #444;">
+                        <div id="nakitBar" class="progress-bar bg-success" role="progressbar" style="width: 50%"></div>
+                        <div id="kartBar" class="progress-bar bg-primary" role="progressbar" style="width: 50%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2 small">
+                        <span>Nakit: <b id="nakitYuzde">%0</b></span>
+                        <span>Kart: <b id="kartYuzde">%0</b></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 mb-5">
+        <button class="btn btn-secondary" onclick="window.location.href='index.html'">Geri Dön</button>
+        <button class="btn btn-outline-danger float-end" onclick="temizle()">Tüm Verileri Sıfırla</button>
     </div>
 </div>
 
 <script>
-    function raporuYukle() {
+    
+    window.onload = () => {
+        let bugun = new Date().toISOString().split('T')[0];
+        document.getElementById("tarihSecici").value = bugun;
+        raporuYukle(bugun);
+    };
+
+    function tariheGoreFiltrele() {
+        let secilenTarih = document.getElementById("tarihSecici").value;
+        raporuYukle(secilenTarih);
+    }
+
+    function raporuYukle(filtreTarih) {
+
         let rapor = JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
         let tablo = document.getElementById("raporTablosu");
         let toplamCiro = 0;
+        let nakitToplam = 0;
+        let kartToplam = 0;
+        let urunSayacı = {}; 
+        
         tablo.innerHTML = "";
 
-        
-        [...rapor].reverse().forEach(islem => {
+    
+        let gosterilecekVeri = rapor.filter(islem => islem.tarih === filtreTarih || !islem.tarih);
+
+        gosterilecekVeri.reverse().forEach(islem => {
             toplamCiro += islem.tutar;
+            if(islem.tur === 'NAKİT') nakitToplam += islem.tutar;
+            else kartToplam += islem.tutar;
+
             
+            if(islem.urunler) {
+                islem.urunler.forEach(u => {
+                    urunSayacı[u] = (urunSayacı[u] || 0) + 1;
+                });
+            }
             
             let turRengi = islem.tur === 'NAKİT' ? 'text-nakit' : 'text-kart';
-            let turYazisi = islem.tur ? islem.tur : "-";
-
             tablo.innerHTML += `
                 <tr>
                     <td>${islem.saat}</td>
                     <td>Masa ${islem.masa}</td>
-                    <td class="tur-metin ${turRengi}">${turYazisi}</td>
+                    <td class="tur-metin ${turRengi}">${islem.tur || "-"}</td>
                     <td class="text-warning font-weight-bold">${islem.tutar} ₺</td>
                 </tr>`;
         });
 
         document.getElementById("toplamCiro").innerText = toplamCiro + " ₺";
+        istatistikGuncelle(nakitToplam, kartToplam, urunSayacı, toplamCiro);
+    }
+
+    function istatistikGuncelle(nakit, kart, urunler, toplam) {
+        
+        if(toplam > 0) {
+            let nYuzde = (nakit / toplam) * 100;
+            let kYuzde = (kart / toplam) * 100;
+            document.getElementById("nakitBar").style.width = nYuzde + "%";
+            document.getElementById("kartBar").style.width = kYuzde + "%";
+            document.getElementById("nakitYuzde").innerText = "%" + Math.round(nYuzde);
+            document.getElementById("kartYuzde").innerText = "%" + Math.round(kYuzde);
+        }
+        
+        let enCokSatan = Object.entries(urunler).sort((a,b) => b[1] - a[1])[0];
+        if(enCokSatan) {
+            document.getElementById("enCokSatanUrun").innerText = enCokSatan[0];
+            document.getElementById("enCokSatanAdet").innerText = enCokSatan[1] + " adet satıldı";
+        } else {
+            document.getElementById("enCokSatanUrun").innerText = "Veri Yok";
+            document.getElementById("enCokSatanAdet").innerText = "Henüz ürün satışı girilmemiş";
+        }
     }
 
     function temizle() {
-        if(confirm("Tüm günlük veriler silinecek. Emin misiniz?")) {
+        if(confirm("DİKKAT! Tüm geçmiş veriler ve bugünkü raporlar kalıcı olarak silinecek. Emin misiniz?")) {
             localStorage.removeItem("gun_sonu_raporu");
             location.reload();
         }
     }
-
-    window.onload = raporuYukle;
 </script>
 </body>
 </html>
