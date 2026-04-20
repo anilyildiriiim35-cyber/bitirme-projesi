@@ -121,7 +121,7 @@
     const panelBaslik = document.getElementById("panelBaslik");
     const secBtn = document.getElementById("secBtn");
 
-    // Masaları Oluşturma
+    
     for (let i = 1; i <= 12; i++) {
         let masaTutar = localStorage.getItem("masa_" + i + "_tutar");
         let siparisler = JSON.parse(localStorage.getItem("masa_" + i + "_siparisler")) || [];
@@ -141,7 +141,7 @@
         masaAlani.appendChild(col);
         const card = col.querySelector(".masa-card");
 
-        // Tıklama Olayı
+        
         card.addEventListener("click", () => {
             document.querySelectorAll(".masa-card").forEach(m => m.classList.remove("masa-secili"));
             card.classList.add("masa-secili");
@@ -149,7 +149,7 @@
             secBtn.disabled = false;
         });
 
-        // Üzerine Gelince Sipariş Detayı Göster (Dolu Masalar İçin)
+        
         card.addEventListener("mouseenter", () => {
             if (durum === "dolu") {
                 panel.classList.add("aktif");
@@ -166,10 +166,10 @@
         card.addEventListener("mouseleave", () => panel.classList.remove("aktif"));
     }
 
-    // Onay Butonu İşlemi
+    
     secBtn.addEventListener("click", function() {
         if (secilenMasa) {
-            // 1. LocalStorage Ayarları
+            
             let mevcutTutar = localStorage.getItem("masa_" + secilenMasa + "_tutar");
             if (!mevcutTutar) {
                 localStorage.setItem("masa_" + secilenMasa + "_tutar", "0");
@@ -177,10 +177,10 @@
             }
             localStorage.setItem("aktifMasa", secilenMasa);
 
-            // 2. Görsel Bildirim Ekleme (İstediğin Kısım)
+            
             const seciliKart = document.querySelector(".masa-secili");
             
-            // Eğer zaten yazı yoksa ekle
+            
             if (!seciliKart.querySelector(".rezervasyon-yazi")) {
                 const uyari = document.createElement("div");
                 uyari.className = "rezervasyon-yazi";
@@ -188,11 +188,11 @@
                 seciliKart.appendChild(uyari);
             }
 
-            // Butonu kilitle ve süreci başlat
+            
             secBtn.disabled = true;
             secBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Yönlendiriliyor...`;
 
-            // 3. 1.5 Saniye Bekle ve Menu.html'e Git
+            
             setTimeout(() => {
                 window.location.href = "siparis.html";
             }, 1500);
