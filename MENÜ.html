@@ -1,50 +1,74 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Urban Menü</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Urban Menü</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-    body { background:#0f0f0f; color:white; font-family: 'Segoe UI', sans-serif; }
+    <style>
+        body { background:#0f0f0f; color:white; font-family: 'Segoe UI', sans-serif; }
 
-    /* KARTLAR */
-    .card {
-        background:#1b1b1b; border: none; border-radius:15px; transition:.3s; overflow:hidden;
-    }
-    .card:hover { transform:translateY(-5px); box-shadow:0 10px 20px rgba(255, 193, 7, 0.2); }
+        
+        .search-container {
+            max-width: 300px;
+            margin-left: auto; 
+        }
+        .form-control-urban {
+            background: #1b1b1b;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 20px;
+            padding-left: 20px;
+        }
+        .form-control-urban:focus {
+            background: #222;
+            color: white;
+            border-color: #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            outline: none;
+        }
 
-    /* FOTOĞRAF BOYUTLARI BÜYÜTÜLDÜ */
-    .card img { width:100%; height:250px; object-fit:cover; }
+        
+        .card {
+            background:#1b1b1b; border: none; border-radius:15px; transition:.3s; overflow:hidden;
+        }
+        .card:hover { transform:translateY(-5px); box-shadow:0 10px 20px rgba(255, 193, 7, 0.2); }
 
-    .card-body { padding:20px; }
+        .card img { width:100%; height:250px; object-fit:cover; }
+        .card-body { padding:20px; }
 
-    /* KATEGORİ ÖZEL */
-    .kategori-kart { cursor:pointer; border: 1px solid #333; }
-    .kategori-kart:hover { border-color: #ffc107; }
+        .kategori-kart { cursor:pointer; border: 1px solid #333; }
+        .kategori-kart:hover { border-color: #ffc107; }
 
-    /* GERİ DÖN BUTONU */
-    .btn-geri { 
-        background: transparent; 
-        border: 1px solid #ffc107; 
-        color: #ffc107; 
-        margin-bottom: 20px; 
-        border-radius: 20px;
-        padding: 8px 25px;
-    }
-    .btn-geri:hover { background: #ffc107; color: black; }
+        
+        .btn-geri { 
+            background: transparent; 
+            border: 1px solid #ffc107; 
+            color: #ffc107; 
+            margin-bottom: 20px; 
+            border-radius: 20px;
+            padding: 8px 25px;
+        }
+        .btn-geri:hover { background: #ffc107; color: black; }
 
-    .fiyat-etiket { color: #ffc107; font-weight: bold; font-size: 1.4rem; margin-top: 10px; }
-    h5 { min-height: 50px; display: flex; align-items: center; justify-content: center; }
-</style>
+        .fiyat-etiket { color: #ffc107; font-weight: bold; font-size: 1.4rem; margin-top: 10px; }
+        h5 { min-height: 50px; display: flex; align-items: center; justify-content: center; }
+    </style>
 </head>
 
 <body class="p-4">
 
 <div class="container">
-    <div class="text-center mb-5">
-        <h1 class="text-warning fw-bold">URBAN RESTORANT</h1>
-        <p class="text-secondary">Lezzetin Şehirdeki Adresi</p>
+    <div class="row align-items-center mb-5">
+        <div class="col-md-8 text-center text-md-start">
+            <h1 class="text-warning fw-bold">URBAN RESTORANT</h1>
+            <p class="text-secondary">Lezzetin Şehirdeki Adresi</p>
+        </div>
+        <div class="col-md-4 mt-3 mt-md-0">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="form-control form-control-urban" placeholder="Ürün ara... (Örn: Antirikot)" onkeyup="aramaYap()">
+            </div>
+        </div>
     </div>
 
     <button id="btnGeri" class="btn btn-geri d-none" onclick="kategorilereDon()">← Kategorilere Dön</button>
@@ -56,21 +80,18 @@
                 <div class="card-body"><h3>KIRMIZI ETLER</h3></div>
             </div>
         </div>
-
         <div class="col-12 col-md-6 col-lg-3">
             <div class="card kategori-kart text-center" onclick="kategoriSec('beyaz')">
                 <img src="Gemini_Generated_Image_nl4wrbnl4wrbnl4w.png" alt="Beyaz Et">
                 <div class="card-body"><h3>BEYAZ ETLER</h3></div>
             </div>
         </div>
-
         <div class="col-12 col-md-6 col-lg-3">
             <div class="card kategori-kart text-center" onclick="kategoriSec('meze')">
                 <img src="Gemini_Generated_Image_smqbg4smqbg4smqb.png" alt="Mezeler">
                 <div class="card-body"><h3>MEZELER</h3></div>
             </div>
         </div>
-
         <div class="col-12 col-md-6 col-lg-3">
             <div class="card kategori-kart text-center" onclick="kategoriSec('icecek')">
                 <img src="Gemini_Generated_Image_5gjr7a5gjr7a5gjr.png" alt="İçecekler">
@@ -78,93 +99,85 @@
             </div>
         </div>
     </div>
-     
-
+      
     <div class="row g-4" id="menuAlani"></div>
 </div>
 
 <script>
-
 const menu = [
     {ad:"DANA PİRZOLA", fiyat:1700 , kat:"kirmizi"},
-  {ad:"KUZU ANTİRİKOT", fiyat:1500 , kat:"kirmizi"},
-  {ad:"KABURGA", fiyat:1200 , kat:"kirmizi"},
-  {ad:"KUZU PİRZOLA", fiyat:1400 , kat:"kirmizi"},
-  {ad:"BONFİLE", fiyat:1200 , kat:"kirmizi"},
-  {ad:"DİNLENDİRİLMİŞ DANA ANTİRİKOT", fiyat:1800 , kat:"kirmizi"},
-  {ad:"DİNLENDİRİLMİŞ KUZU ANTİRİKOT", fiyat:1600 , kat:"kirmizi"},
-  {ad:"DİNLENDİRİLMİŞ KUZU PİRZOLA", fiyat:1500 , kat:"kirmizi"},
-  {ad:"DİNLENDİRİLMİŞ BONFİLE", fiyat:1300 , kat:"kirmizi"},
-  {ad:"DİNLENDİRİLMİŞ KABURGA", fiyat:1300 , kat:"kirmizi"},
-  {ad:"DİNLENDİRİLMİŞ DANA PİRZOLA", fiyat:1900 , kat:"kirmizi"},
-  {ad:"ADANA", fiyat:700 , kat:"kirmizi"},
-  {ad:"URFA", fiyat:700 , kat:"kirmizi"},
-  {ad:"KÖRPE", fiyat:800  , kat:"kirmizi"},
-  {ad:"KUZU ŞİŞ", fiyat:900 , kat:"kirmizi"},
-  {ad:"DANA ŞİŞ", fiyat:1000 , kat:"kirmizi"},
-  {ad:"KUZU KÜLBASTI", fiyat:1100 , kat:"kirmizi"},
-  {ad:"DANA KÜLBASTI", fiyat:1200 , kat:"kirmizi"},
-  {ad:"KUZU İNCİK", fiyat:1300 , kat:"kirmizi"},
-  {ad:"DANA İNCİK", fiyat:1400 , kat:"kirmizi"},
-  {ad:"KUZU GÜVEÇ", fiyat:1500  , kat:"kirmizi"},
-  {ad:"DANA GÜVEÇ", fiyat:1600, kat:"kirmizi"},
-  {ad:"KUZU SOTE", fiyat:1700, kat:"kirmizi"},
-  {ad:"DANA SOTE", fiyat:1600, kat:"kirmizi"},
-  {ad:"KUZU KAVURMA", fiyat:1800, kat:"kirmizi"},
-  {ad:"DANA KAVURMA", fiyat:1900, kat:"kirmizi"},
-  {ad:"KÖFTE", fiyat:400, kat:"kirmizi"},
-  {ad:"KAŞARLI KÖFTE", fiyat:500, kat:"kirmizi"},
-    
-   {ad:"TAVUK ŞİŞ", fiyat:600 , kat:"beyaz"},
-  {ad:"TAVUK KÜLBASTI", fiyat:700 , kat:"beyaz"},
-  {ad:"TAVUK İNCİK", fiyat:800 , kat:"beyaz"},
-  {ad:"TAVUK GÜVEÇ", fiyat:900 , kat:"beyaz"},
-  {ad:"TAVUK SOTE", fiyat:1000 , kat:"beyaz"},
-  {ad:"TAVUK KAVURMA", fiyat:1100 , kat:"beyaz"},
-  {ad:"KARİDES", fiyat:1200, kat:"beyaz"},
-  {ad:"LEVREK", fiyat:1300, kat:"beyaz"},
-  {ad:"ÇUPRA", fiyat:1400, kat:"beyaz"},
-  {ad:"SOMON", fiyat:1500, kat:"beyaz"},
-  {ad:"MEZİT", fiyat:1600, kat:"beyaz"},
-  {ad:"KAYA BARBUNU", fiyat:1700, kat:"beyaz"},
-  {ad:"AHTAPOT", fiyat:1800, kat:"beyaz"},
-  {ad:"KALAMAR", fiyat:1900, kat:"beyaz"},
-    
-  {ad:"KAŞARLI MANTAR", fiyat:500 , kat:"meze"},
-  {ad:"PATATES kızartması", fiyat:300, kat:"meze"},
-  {ad:"PATATES PÜRESİ", fiyat:350, kat:"meze"},
-  {ad:"HÜNKAR BEĞENDİ", fiyat:800, kat:"meze"},
-  {ad:"FIRINLANMIŞ SEBZE", fiyat:400, kat:"meze"},
-  {ad:"MEVSİM SALATA", fiyat:500, kat:"meze"},
-  {ad:"ÇOBAN SALATA", fiyat:600, kat:"meze"},
-  {ad:"SEBZE SALATA", fiyat:400, kat:"meze"},
-  {ad:"YEŞİL SALATA", fiyat:450, kat:"meze"},
-  {ad:"KÖZLENMİŞ PATLICAN SALATA", fiyat:550, kat:"meze"},
-  {ad:"ATOM", fiyat:550, kat:"meze"},
-  {ad:"HAVUÇ MEZESİ", fiyat:650, kat:"meze"},
-  {ad:"FAVA", fiyat:700, kat:"meze"},
-  {ad:"HUMUS", fiyat:750, kat:"meze"},
-  {ad:"ACILI EZME", fiyat:800, kat:"meze"},
-  {ad:"CACIK", fiyat:400, kat:"meze"},
-  {ad:"şakşuka", fiyat:500 , kat:"meze"},
-   
-  {ad:"KOLA", fiyat:100, kat:"icecek"},
-  {ad:"FANTA", fiyat:100, kat:"icecek"}, 
-  {ad:"SPRITE", fiyat:100, kat:"icecek"},
-  {ad:"AYRAN", fiyat:70, kat:"icecek"},
-  {ad:"ŞALGAM", fiyat:80, kat:"icecek"},
-  {ad:"SODA", fiyat:60, kat:"icecek"},
-  {ad:"SU", fiyat:50, kat:"icecek"},
-  {ad:"TÜRK KAHVESİ", fiyat:120, kat:"icecek"},
-  {ad:"ESPRESSO", fiyat:150, kat:"icecek"},
-  {ad:"AMERİKANO", fiyat:130, kat:"icecek"},
-  {ad:"LATTE", fiyat:160, kat:"icecek"},
-  {ad:"CAPPUCCINO", fiyat:170, kat:"icecek"},
-  {ad:"MOCHA", fiyat:180, kat:"icecek"},
-  {ad:"ÇAY", fiyat:50, kat:"icecek"},
-
-
-    
+    {ad:"KUZU ANTİRİKOT", fiyat:1500 , kat:"kirmizi"},
+    {ad:"KABURGA", fiyat:1200 , kat:"kirmizi"},
+    {ad:"KUZU PİRZOLA", fiyat:1400 , kat:"kirmizi"},
+    {ad:"BONFİLE", fiyat:1200 , kat:"kirmizi"},
+    {ad:"DİNLENDİRİLMİŞ DANA ANTİRİKOT", fiyat:1800 , kat:"kirmizi"},
+    {ad:"DİNLENDİRİLMİŞ KUZU ANTİRİKOT", fiyat:1600 , kat:"kirmizi"},
+    {ad:"DİNLENDİRİLMİŞ KUZU PİRZOLA", fiyat:1500 , kat:"kirmizi"},
+    {ad:"DİNLENDİRİLMİŞ BONFİLE", fiyat:1300 , kat:"kirmizi"},
+    {ad:"DİNLENDİRİLMİŞ KABURGA", fiyat:1300 , kat:"kirmizi"},
+    {ad:"DİNLENDİRİLMİŞ DANA PİRZOLA", fiyat:1900 , kat:"kirmizi"},
+    {ad:"ADANA", fiyat:700 , kat:"kirmizi"},
+    {ad:"URFA", fiyat:700 , kat:"kirmizi"},
+    {ad:"KÖRPE", fiyat:800  , kat:"kirmizi"},
+    {ad:"KUZU ŞİŞ", fiyat:900 , kat:"kirmizi"},
+    {ad:"DANA ŞİŞ", fiyat:1000 , kat:"kirmizi"},
+    {ad:"KUZU KÜLBASTI", fiyat:1100 , kat:"kirmizi"},
+    {ad:"DANA KÜLBASTI", fiyat:1200 , kat:"kirmizi"},
+    {ad:"KUZU İNCİK", fiyat:1300 , kat:"kirmizi"},
+    {ad:"DANA İNCİK", fiyat:1400 , kat:"kirmizi"},
+    {ad:"KUZU GÜVEÇ", fiyat:1500  , kat:"kirmizi"},
+    {ad:"DANA GÜVEÇ", fiyat:1600, kat:"kirmizi"},
+    {ad:"KUZU SOTE", fiyat:1700, kat:"kirmizi"},
+    {ad:"DANA SOTE", fiyat:1600, kat:"kirmizi"},
+    {ad:"KUZU KAVURMA", fiyat:1800, kat:"kirmizi"},
+    {ad:"DANA KAVURMA", fiyat:1900, kat:"kirmizi"},
+    {ad:"KÖFTE", fiyat:400, kat:"kirmizi"},
+    {ad:"KAŞARLI KÖFTE", fiyat:500, kat:"kirmizi"},
+    {ad:"TAVUK ŞİŞ", fiyat:600 , kat:"beyaz"},
+    {ad:"TAVUK KÜLBASTI", fiyat:700 , kat:"beyaz"},
+    {ad:"TAVUK İNCİK", fiyat:800 , kat:"beyaz"},
+    {ad:"TAVUK GÜVEÇ", fiyat:900 , kat:"beyaz"},
+    {ad:"TAVUK SOTE", fiyat:1000 , kat:"beyaz"},
+    {ad:"TAVUK KAVURMA", fiyat:1100 , kat:"beyaz"},
+    {ad:"KARİDES", fiyat:1200, kat:"beyaz"},
+    {ad:"LEVREK", fiyat:1300, kat:"beyaz"},
+    {ad:"ÇUPRA", fiyat:1400, kat:"beyaz"},
+    {ad:"SOMON", fiyat:1500, kat:"beyaz"},
+    {ad:"MEZİT", fiyat:1600, kat:"beyaz"},
+    {ad:"KAYA BARBUNU", fiyat:1700, kat:"beyaz"},
+    {ad:"AHTAPOT", fiyat:1800, kat:"beyaz"},
+    {ad:"KALAMAR", fiyat:1900, kat:"beyaz"},
+    {ad:"KAŞARLI MANTAR", fiyat:500 , kat:"meze"},
+    {ad:"PATATES kızartması", fiyat:300, kat:"meze"},
+    {ad:"PATATES PÜRESİ", fiyat:350, kat:"meze"},
+    {ad:"HÜNKAR BEĞENDİ", fiyat:800, kat:"meze"},
+    {ad:"FIRINLANMIŞ SEBZE", fiyat:400, kat:"meze"},
+    {ad:"MEVSİM SALATA", fiyat:500, kat:"meze"},
+    {ad:"ÇOBAN SALATA", fiyat:600, kat:"meze"},
+    {ad:"SEBZE SALATA", fiyat:400, kat:"meze"},
+    {ad:"YEŞİL SALATA", fiyat:450, kat:"meze"},
+    {ad:"KÖZLENMİŞ PATLICAN SALATA", fiyat:550, kat:"meze"},
+    {ad:"ATOM", fiyat:550, kat:"meze"},
+    {ad:"HAVUÇ MEZESİ", fiyat:650, kat:"meze"},
+    {ad:"FAVA", fiyat:700, kat:"meze"},
+    {ad:"HUMUS", fiyat:750, kat:"meze"},
+    {ad:"ACILI EZME", fiyat:800, kat:"meze"},
+    {ad:"CACIK", fiyat:400, kat:"meze"},
+    {ad:"şakşuka", fiyat:500 , kat:"meze"},
+    {ad:"KOLA", fiyat:100, kat:"icecek"},
+    {ad:"FANTA", fiyat:100, kat:"icecek"}, 
+    {ad:"SPRITE", fiyat:100, kat:"icecek"},
+    {ad:"AYRAN", fiyat:70, kat:"icecek"},
+    {ad:"ŞALGAM", fiyat:80, kat:"icecek"},
+    {ad:"SODA", fiyat:60, kat:"icecek"},
+    {ad:"SU", fiyat:50, kat:"icecek"},
+    {ad:"TÜRK KAHVESİ", fiyat:120, kat:"icecek"},
+    {ad:"ESPRESSO", fiyat:150, kat:"icecek"},
+    {ad:"AMERİKANO", fiyat:130, kat:"icecek"},
+    {ad:"LATTE", fiyat:160, kat:"icecek"},
+    {ad:"CAPPUCCINO", fiyat:170, kat:"icecek"},
+    {ad:"MOCHA", fiyat:180, kat:"icecek"},
+    {ad:"ÇAY", fiyat:50, kat:"icecek"}
 ];
 
 function kategoriSec(kategori){
@@ -174,10 +187,38 @@ function kategoriSec(kategori){
     let menuAlani = document.getElementById("menuAlani");
     menuAlani.innerHTML = "";
 
-    // Filtreleme artık 'kat' özelliğine göre çalışıyor
     let filtreli = menu.filter(u => u.kat === kategori);
+    ekranaBas(filtreli);
+}
 
-    filtreli.forEach(u => {
+function aramaYap() {
+    let kelime = document.getElementById("searchInput").value.toLowerCase();
+    let menuAlani = document.getElementById("menuAlani");
+    let kategoriAlani = document.getElementById("kategoriAlani");
+    let btnGeri = document.getElementById("btnGeri");
+
+    if (kelime.length > 0) {
+        
+        kategoriAlani.classList.add("d-none");
+        btnGeri.classList.remove("d-none");
+        
+        let sonuclar = menu.filter(u => u.ad.toLowerCase().includes(kelime));
+        menuAlani.innerHTML = "";
+        
+        if (sonuclar.length > 0) {
+            ekranaBas(sonuclar);
+        } else {
+            menuAlani.innerHTML = `<div class="col-12 text-center text-secondary mt-5"><h5>Aradığınız ürün bulunamadı.</h5></div>`;
+        }
+    } else {
+        
+        kategorilereDon();
+    }
+}
+
+function ekranaBas(liste) {
+    let menuAlani = document.getElementById("menuAlani");
+    liste.forEach(u => {
         menuAlani.innerHTML += `
             <div class="col-md-4 col-lg-3 mb-4">
                 <div class="card h-100">
@@ -192,6 +233,7 @@ function kategoriSec(kategori){
 }
 
 function kategorilereDon() {
+    document.getElementById("searchInput").value = ""; 
     document.getElementById("kategoriAlani").classList.remove("d-none");
     document.getElementById("btnGeri").classList.add("d-none");
     document.getElementById("menuAlani").innerHTML = "";
