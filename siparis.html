@@ -1,142 +1,71 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Urban POS - Sipariş</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
-body { background:#0f0f0f; color:#e0e0e0; font-family:'Segoe UI'; }
-
-.card { background:#252525; border:1px solid #333; border-radius:12px; color:white; }
-.card:hover { border-color:#ffc107; transform:scale(1.02); }
-
-.masa-no { color:#ffc107; font-weight:bold; }
-.yemek-adi { font-weight:800; text-transform:uppercase; }
-.fiyat-text { color:#ffc107; font-weight:bold; }
-
-.btn-ekle { background:#ffc107; color:black; width:100%; border:none; font-weight:bold; }
-
-.siparis-alani {
-    position:fixed;
-    right:0;
-    top:0;
-    width:320px;
-    height:100%;
-    background:#161616;
-    border-left:4px solid #ffc107;
-    padding:20px;
-    overflow-y:auto;
-}
-
-.btn-odeme {
-    background:#28a745;
-    color:white;
-    width:100%;
-    margin-top:20px;
-    padding:12px;
-    font-weight:bold;
-}
-
-.pay-btn{
-    background:#252525;
-    border:2px solid #333;
-    color:white;
-    padding:18px;
-    font-size:18px;
-    border-radius:12px;
-    transition:0.3s;
-    font-weight:600;
-}
-
-.pay-btn:hover{
-    border-color:#ffc107;
-    color:#ffc107;
-    transform:scale(1.03);
-}
-
-.modal-content{
-    background:#1b1b1b;
-    color:white;
-    border:1px solid #ffc107;
-    border-radius:15px;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Urban POS - Sipariş</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background:#0f0f0f; color:#e0e0e0; font-family:'Segoe UI'; }
+        .card { background:#252525; border:1px solid #333; border-radius:12px; color:white; cursor:pointer; }
+        .card:hover { border-color:#ffc107; transform:scale(1.02); }
+        .masa-no { color:#ffc107; font-weight:bold; }
+        .yemek-adi { font-weight:800; text-transform:uppercase; min-height: 45px; }
+        .fiyat-text { color:#ffc107; font-weight:bold; }
+        .btn-ekle { background:#ffc107; color:black; width:100%; border:none; font-weight:bold; }
+        .siparis-alani { position:fixed; right:0; top:0; width:320px; height:100%; background:#161616; border-left:4px solid #ffc107; padding:20px; overflow-y:auto; }
+        .btn-odeme { background:#28a745; color:white; width:100%; margin-top:20px; padding:12px; font-weight:bold; }
+        .pay-btn{ background:#252525; border:2px solid #333; color:white; padding:18px; font-size:18px; border-radius:12px; transition:0.3s; font-weight:600; }
+        .pay-btn:hover{ border-color:#ffc107; color:#ffc107; transform:scale(1.03); }
+        .modal-content{ background:#1b1b1b; color:white; border:1px solid #ffc107; border-radius:15px; }
+    </style>
 </head>
-
 <body class="p-4">
 
 <script>
-if(sessionStorage.getItem("oturum") !== "true"){
-    window.location.href = "GİRİŞ YAP.html";
-}
+if(sessionStorage.getItem("oturum") !== "true") window.location.href = "GİRİŞ YAP.html";
 </script>
 
 <div class="container" style="margin-right:340px;">
-    <h3 id="masaBaslik" class="text-warning mb-4">Masa Seçiniz</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 id="masaBaslik" class="text-warning mb-0">Masa Seçiniz</h3>
+        <button class="btn btn-outline-light" onclick="window.location.href='rapor.html'">📊 Raporlar</button>
+    </div>
     <div class="row mb-4" id="masaAlani"></div>
 
     <h4 class="mb-3">Menü</h4>
     <div class="row" id="menuAlani"></div>
 </div>
 
-
 <div class="siparis-alani">
     <h4 class="text-warning">Sipariş</h4>
     <div id="siparisListesi"></div>
-
     <hr>
-
     <h5>Toplam: <span id="toplamTutar">0</span> ₺</h5>
-
     <button class="btn btn-odeme" onclick="odemeOnay()">ÖDEME AL</button>
 </div>
-
 
 <div class="modal fade" id="odemeModal">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content p-3">
-
       <h5 class="text-warning text-center mb-3">Ödeme Yöntemi</h5>
-
-      <p class="text-center">
-        Toplam: <span id="modalTutar" class="text-success fw-bold">0</span> ₺
-      </p>
-
+      <p class="text-center">Toplam: <span id="modalTutar" class="text-success fw-bold">0</span> ₺</p>
       <div class="d-grid gap-3">
         <button class="pay-btn" onclick="odemeYap('NAKİT')">💵 NAKİT</button>
         <button class="pay-btn" onclick="odemeYap('KART')">💳 KART</button>
       </div>
-
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-
 let aktifMasa = null;
 const modal = new bootstrap.Modal(document.getElementById('odemeModal'));
 
-const menu = [
-  {ad:"DANA PİRZOLA", fiyat:1700},
-  {ad:"KÖFTE", fiyat:400},
-  {ad:"TAVUK ŞİŞ", fiyat:600},
-  {ad:"LEVREK", fiyat:1300},
-  {ad:"HUMUS", fiyat:750}
-];
-
 function masaOlustur(){
     let alan = document.getElementById("masaAlani");
-
     for(let i=1;i<=12;i++){
-        alan.innerHTML += `
-        <div class="col-md-2 mb-2">
-            <div class="card p-3 text-center" onclick="masaSec(${i})">
-                <div class="masa-no">Masa ${i}</div>
-            </div>
-        </div>`;
+        alan.innerHTML += `<div class="col-md-2 mb-2"><div class="card p-3 text-center" onclick="masaSec(${i})"><div class="masa-no">Masa ${i}</div></div></div>`;
     }
 }
 
@@ -147,16 +76,17 @@ function masaSec(no){
 }
 
 function menuYukle(){
+    let urunler = JSON.parse(localStorage.getItem("urban_products")) || [];
     let alan = document.getElementById("menuAlani");
-    menu.forEach(u=>{
+    alan.innerHTML = "";
+    
+    urunler.filter(u => u.inStock).forEach(u => {
         alan.innerHTML += `
         <div class="col-md-3 mb-3">
             <div class="card p-3 text-center">
-                <div class="yemek-adi">${u.ad}</div>
-                <div class="fiyat-text">${u.fiyat} ₺</div>
-                <button class="btn btn-ekle btn-sm mt-2" onclick="ekle('${u.ad}',${u.fiyat})">
-                    EKLE +
-                </button>
+                <div class="yemek-adi">${u.name}</div>
+                <div class="fiyat-text">${u.price} ₺</div>
+                <button class="btn btn-ekle btn-sm mt-2" onclick="ekle('${u.name}',${u.price})">EKLE +</button>
             </div>
         </div>`;
     });
@@ -164,82 +94,60 @@ function menuYukle(){
 
 function ekle(ad,fiyat){
     if(!aktifMasa) return alert("Masa seç!");
-
     let key = "masa_" + aktifMasa;
     let siparis = JSON.parse(localStorage.getItem(key)) || [];
-
     siparis.push({ad,fiyat});
-
     localStorage.setItem(key, JSON.stringify(siparis));
-
     siparisGoster();
 }
 
 function siparisGoster(){
     if(!aktifMasa) return;
-
     let key = "masa_" + aktifMasa;
     let siparis = JSON.parse(localStorage.getItem(key)) || [];
-
     let alan = document.getElementById("siparisListesi");
     let toplam = 0;
-
     alan.innerHTML = "";
-
     siparis.forEach(s=>{
         toplam += Number(s.fiyat);
-        alan.innerHTML += `
-        <div class="border-bottom py-1">
-            ${s.ad}
-            <span class="float-end">${s.fiyat} ₺</span>
-        </div>`;
+        alan.innerHTML += `<div class="border-bottom py-1">${s.ad} <span class="float-end">${s.fiyat} ₺</span></div>`;
     });
-
     document.getElementById("toplamTutar").innerText = toplam;
 }
 
 function odemeOnay(){
     if(!aktifMasa) return alert("Masa seç!");
-    
     let toplam = document.getElementById("toplamTutar").innerText;
-
     if(toplam == 0) return alert("Masa boş!");
-
     document.getElementById("modalTutar").innerText = toplam;
     modal.show();
 }
 
-function odemeYap(tip){
 
+function odemeYap(tip){
     let key = "masa_" + aktifMasa;
     let siparis = JSON.parse(localStorage.getItem(key)) || [];
-
     let rapor = JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
 
+    
     rapor.push({
-        tarih: new Date().toISOString().split("T")[0],
-        saat: new Date().toLocaleTimeString(),
+        tarih: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+        saat: new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'}),
         masa: aktifMasa,
         tur: tip,
         tutar: Number(document.getElementById("toplamTutar").innerText),
-        urunler: siparis.map(x=>x.ad)
+        urunler: siparis.map(x => x.ad) // Ürün isimlerini dizi olarak atar
     });
 
     localStorage.setItem("gun_sonu_raporu", JSON.stringify(rapor));
-
     localStorage.removeItem(key);
-
     modal.hide();
-
-    alert("Ödeme alındı: " + tip);
-
+    alert("Ödeme Alındı!");
     location.reload();
 }
 
 masaOlustur();
 menuYukle();
-
 </script>
-
 </body>
 </html>
