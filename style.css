@@ -1,18 +1,228 @@
- body { background-color: #1c1c1c; color: #f5f5f5; }
+/* ===== GENEL ===== */
+body {
+  background: #0f0f0f;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', sans-serif;
+}
 
-  .btn-hero { background-color: orange; color: #fff; }
+/* ===== NAVBAR / GENEL BUTON ===== */
+.btn-hero {
+  background-color: orange;
+  color: #fff;
+}
 
-  .card:hover { transform: scale(1.05); transition: 0.3s; }
-/* sipariş sayfa tasarımı */
-        body { background:#0f0f0f; color:#e0e0e0; font-family:'Segoe UI'; }
-        .card { background:#252525; border:1px solid #333; border-radius:12px; color:white; cursor:pointer; }
-        .card:hover { border-color:#ffc107; transform:scale(1.02); }
-        .masa-no { color:#ffc107; font-weight:bold; }
-        .yemek-adi { font-weight:800; text-transform:uppercase; min-height: 45px; }
-        .fiyat-text { color:#ffc107; font-weight:bold; }
-        .btn-ekle { background:#ffc107; color:black; width:100%; border:none; font-weight:bold; }
-        .siparis-alani { position:fixed; right:0; top:0; width:320px; height:100%; background:#161616; border-left:4px solid #ffc107; padding:20px; overflow-y:auto; }
-        .btn-odeme { background:#28a745; color:white; width:100%; margin-top:20px; padding:12px; font-weight:bold; }
-        .pay-btn{ background:#252525; border:2px solid #333; color:white; padding:18px; font-size:18px; border-radius:12px; transition:0.3s; font-weight:600; }
-        .pay-btn:hover{ border-color:#ffc107; color:#ffc107; transform:scale(1.03); }
-        .modal-content{ background:#1b1b1b; color:white; border:1px solid #ffc107; border-radius:15px; }
+/* ===== KART SİSTEMİ ===== */
+.card {
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card:hover {
+  border-color: #ffc107;
+  transform: scale(1.03);
+}
+
+/* ===== MASA / ÜRÜN TEXT ===== */
+.masa-no {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.yemek-adi {
+  font-weight: 800;
+  text-transform: uppercase;
+  min-height: 45px;
+}
+
+.fiyat-text {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+/* ===== BUTONLAR ===== */
+.btn-ekle {
+  background: #ffc107;
+  color: black;
+  width: 100%;
+  border: none;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.btn-ekle:hover {
+  background: #ffb300;
+}
+
+/* ===== SİPARİŞ PANELİ ===== */
+.siparis-alani {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 100%;
+  background: #161616;
+  border-left: 4px solid #ffc107;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* ===== ÖDEME BUTONU ===== */
+.btn-odeme {
+  background: #28a745;
+  color: white;
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  font-weight: bold;
+  border-radius: 10px;
+  border: none;
+}
+
+.btn-odeme:hover {
+  background: #218838;
+}
+
+/* ===== ÖDEME SEÇİM BUTONLARI ===== */
+.pay-btn {
+  background: #252525;
+  border: 2px solid #333;
+  color: white;
+  padding: 18px;
+  font-size: 18px;
+  border-radius: 12px;
+  transition: 0.3s;
+  font-weight: 600;
+  width: 100%;
+}
+
+.pay-btn:hover {
+  border-color: #ffc107;
+  color: #ffc107;
+  transform: scale(1.03);
+}
+
+/* ===== MODAL ===== */
+.modal-content {
+  background: #1b1b1b;
+  color: white;
+  border: 1px solid #ffc107;
+  border-radius: 15px;
+}
+body { 
+            background: linear-gradient(135deg, #0f0f0f, #1c1c1c); 
+            color: white; 
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .masa-card {
+            background: #1e1e1e; 
+            border-radius: 14px; 
+            padding: 25px; 
+            margin: 10px;
+            cursor: pointer; 
+            transition: .3s; 
+            text-align: center;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .masa-card:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.3); 
+        }
+
+        .masa-bos { border-left: 6px solid #28a745; }
+        .masa-dolu { border-left: 6px solid #dc3545; }
+
+        .masa-secili { 
+            border: 2px solid #ffc107 !important; 
+            box-shadow: 0 0 20px #ffc107; 
+        }
+
+        .tutar { 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #ffc107; 
+            margin-top: 10px;
+        }
+
+        /* Yeni eklenen rezervasyon yazısı stili */
+        .rezervasyon-yazi {
+            color: #00ecff;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-transform: uppercase;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        .siparis-panel {
+            position: fixed; 
+            top: 20px; 
+            right: -320px; 
+            width: 300px; 
+            height: 90%;
+            background: #1a1a1a; 
+            border-left: 3px solid #ffc107;
+            padding: 15px; 
+            transition: .3s; 
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .siparis-panel.aktif { right: 0; }
+
+        .btn-hero {
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            color: black; 
+            font-weight: bold; 
+            padding: 12px 35px;
+            border-radius: 12px; 
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-hero:disabled {
+            background: #444;
+            color: #888;
+        }
+
+        .btn-hero:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+        }
+
+body{
+    background:#0f0f0f;
+    color:white;
+}
+
+.card{
+    background:#1e1e1e;
+    border:1px solid #333;
+    border-radius:12px;
+}
+
+.btn-filter{
+    margin-right:8px;
+    margin-bottom:10px;
+}
+
+.search-box{
+    background:#1b1b1b;
+    border:1px solid #333;
+    color:white;
+    border-radius:10px;
+    padding:10px;
+}
