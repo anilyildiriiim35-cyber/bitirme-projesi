@@ -1,0 +1,18 @@
+ body { background-color: #1c1c1c; color: #f5f5f5; }
+
+  .btn-hero { background-color: orange; color: #fff; }
+
+  .card:hover { transform: scale(1.05); transition: 0.3s; }
+/* sipariş sayfa tasarımı */
+        body { background:#0f0f0f; color:#e0e0e0; font-family:'Segoe UI'; }
+        .card { background:#252525; border:1px solid #333; border-radius:12px; color:white; cursor:pointer; }
+        .card:hover { border-color:#ffc107; transform:scale(1.02); }
+        .masa-no { color:#ffc107; font-weight:bold; }
+        .yemek-adi { font-weight:800; text-transform:uppercase; min-height: 45px; }
+        .fiyat-text { color:#ffc107; font-weight:bold; }
+        .btn-ekle { background:#ffc107; color:black; width:100%; border:none; font-weight:bold; }
+        .siparis-alani { position:fixed; right:0; top:0; width:320px; height:100%; background:#161616; border-left:4px solid #ffc107; padding:20px; overflow-y:auto; }
+        .btn-odeme { background:#28a745; color:white; width:100%; margin-top:20px; padding:12px; font-weight:bold; }
+        .pay-btn{ background:#252525; border:2px solid #333; color:white; padding:18px; font-size:18px; border-radius:12px; transition:0.3s; font-weight:600; }
+        .pay-btn:hover{ border-color:#ffc107; color:#ffc107; transform:scale(1.03); }
+        .modal-content{ background:#1b1b1b; color:white; border:1px solid #ffc107; border-radius:15px; }
