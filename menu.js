@@ -8,22 +8,18 @@ function getProducts(){
 
 
 // =========================
-// 📊 MENÜYÜ YAZDIR
+// 📊 MENÜ RENDER
 // =========================
 function renderMenu(list){
 
     let container = document.getElementById("menu");
-
-    if(!container){
-        console.warn("menu id bulunamadı");
-        return;
-    }
+    if(!container) return;
 
     let html = "";
 
     list.forEach(p => {
 
-        // 🔥 YENİ SİSTEM FİLTRE
+        // 🔥 HER DURUMDA GÜVENLİ FİLTRE
         if(!p.active || p.stock <= 0) return;
 
         html += `
@@ -43,8 +39,7 @@ function renderMenu(list){
                 <small class="text-info">Stok: ${p.stock}</small>
 
             </div>
-        </div>
-        `;
+        </div>`;
     });
 
     container.innerHTML = html;
@@ -57,6 +52,9 @@ function renderMenu(list){
 function filterMenu(type){
 
     let data = getProducts();
+
+    // 🔥 önce aktif ürünleri filtrele
+    data = data.filter(p => p.active && p.stock > 0);
 
     if(type !== "hepsi"){
         data = data.filter(p => p.category === type);
@@ -73,11 +71,9 @@ function searchMenu(){
 
     let q = document.getElementById("search")?.value.toLowerCase() || "";
 
-    let data = getProducts().filter(p =>
-        p.active &&
-        p.stock > 0 &&
-        p.name.toLowerCase().includes(q)
-    );
+    let data = getProducts()
+        .filter(p => p.active && p.stock > 0)
+        .filter(p => p.name.toLowerCase().includes(q));
 
     renderMenu(data);
 }
