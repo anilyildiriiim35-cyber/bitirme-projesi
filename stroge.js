@@ -1,4 +1,3 @@
-
 // =========================
 // 🔑 DATABASE KEY
 // =========================
@@ -25,15 +24,16 @@ function saveProducts(data){
 // ➕ ÜRÜN EKLE
 // =========================
 function addProduct(name, price, stock, category){
+
     let products = getProducts();
 
     products.push({
-        id: Date.now(),
+        id: Date.now(), // 🔥 tekil id (EN DOĞRU YÖNTEM)
         name,
         price: Number(price),
         stock: Number(stock),
         category,
-        active: true
+        active: Number(stock) > 0
     });
 
     saveProducts(products);
@@ -44,8 +44,10 @@ function addProduct(name, price, stock, category){
 // ❌ ÜRÜN SİL
 // =========================
 function deleteProduct(id){
-    let products = getProducts();
-    products = products.filter(p => p.id !== id);
+
+    let products = getProducts()
+        .filter(p => p.id !== id);
+
     saveProducts(products);
 }
 
@@ -54,37 +56,34 @@ function deleteProduct(id){
 // 📊 ÜRÜN GÜNCELLE
 // =========================
 function updateProduct(id, data){
+
     let products = getProducts();
 
     let p = products.find(x => x.id === id);
     if(!p) return;
 
-    p.name = data.name ?? p.name;
-    p.price = data.price ?? p.price;
-    p.stock = data.stock ?? p.stock;
-    p.category = data.category ?? p.category;
+    if(data.name !== undefined) p.name = data.name;
+    if(data.price !== undefined) p.price = Number(data.price);
+    if(data.stock !== undefined) p.stock = Number(data.stock);
+    if(data.category !== undefined) p.category = data.category;
 
-    if(p.stock <= 0){
-        p.stock = 0;
-        p.active = false;
-    }
+    p.active = p.stock > 0;
 
     saveProducts(products);
 }
 
 
 // =========================
-// 📉 STOK DÜŞ
+// 📉 STOK DÜŞ (ID İLE - DAHA SAĞLAM)
 // =========================
-function decreaseStock(name, amount = 1){
+function decreaseStockById(id, amount = 1){
+
     let products = getProducts();
 
-    let p = products.find(x => x.name === name);
+    let p = products.find(x => x.id === id);
     if(!p) return false;
 
-    if(p.stock < amount){
-        return false; // stok yok
-    }
+    if(p.stock < amount) return false;
 
     p.stock -= amount;
 
@@ -102,13 +101,14 @@ function decreaseStock(name, amount = 1){
 // 📈 STOK ARTTIR
 // =========================
 function increaseStock(id, amount = 1){
+
     let products = getProducts();
 
     let p = products.find(x => x.id === id);
     if(!p) return;
 
     p.stock += amount;
-    if(p.stock > 0) p.active = true;
+    p.active = true;
 
     saveProducts(products);
 }
@@ -118,20 +118,22 @@ function increaseStock(id, amount = 1){
 // 🍽 MENÜ İÇİN ÜRÜNLER
 // =========================
 function getMenuProducts(){
+
     return getProducts().filter(p => p.active && p.stock > 0);
 }
 
 
 // =========================
-// 🧾 ORDER SATIŞ
+// 🧾 SATIŞ (ORDER İÇİN)
 // =========================
-function sellProduct(name, amount = 1){
-    return decreaseStock(name, amount);
+function sellProductById(id, amount = 1){
+
+    return decreaseStockById(id, amount);
 }
 
 
 // =========================
-// 🔥 RESET (İSTEĞE BAĞLI)
+// 🔥 RESET
 // =========================
 function clearAllProducts(){
     localStorage.removeItem(KEY);
