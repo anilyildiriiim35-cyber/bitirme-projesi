@@ -84,61 +84,8 @@ onkeyup="searchMenu()">
 
 </div>
 
-<script>
+<script src="menu.js"></script>
 
-let allProducts = [];
-
-function getProducts(){
-    return JSON.parse(localStorage.getItem("urban_products")) || [];
-}
-
-function render(list){
-    let html = "";
-
-    list.forEach(u=>{
-        if(!u.inStock) return;
-
-        html += `
-        <div class="col-md-3 mb-3">
-            <div class="card p-3 text-center">
-                <h5>${u.name}</h5>
-                <b class="text-warning">${u.price} ₺</b>
-                <small class="text-secondary">${u.category}</small>
-            </div>
-        </div>`;
-    });
-
-    document.getElementById("menu").innerHTML = html;
-}
-
-
-function filter(type){
-    let data = allProducts;
-
-    if(type !== "hepsi"){
-        data = data.filter(x => x.category === type);
-    }
-
-    render(data);
-}
-
-
-function searchMenu(){
-    let q = document.getElementById("search").value.toLowerCase();
-
-    let filtered = allProducts.filter(x =>
-        x.inStock &&
-        x.name.toLowerCase().includes(q)
-    );
-
-    render(filtered);
-}
-
-
-allProducts = getProducts();
-render(allProducts);
-
-</script>
-
+<script src="storage.js"></script>
 </body>
 </html>

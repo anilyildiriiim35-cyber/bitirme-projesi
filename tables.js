@@ -1,84 +1,114 @@
-  let secilenMasa = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+
     const masaAlani = document.getElementById("masaAlani");
-    const panel = document.getElementById("siparisPanel");
-    const panelIcerik = document.getElementById("siparisIcerik");
-    const panelBaslik = document.getElementById("panelBaslik");
     const secBtn = document.getElementById("secBtn");
 
-    
+    if (!masaAlani) {
+        console.error("masaAlani bulunamadı!");
+        return;
+    }
+
+    let secilenMasa = null;
+
+    // =========================
+    // 🪑 MASALAR
+    // =========================
     for (let i = 1; i <= 12; i++) {
-        let masaTutar = localStorage.getItem("masa_" + i + "_tutar");
-        let siparisler = JSON.parse(localStorage.getItem("masa_" + i + "_siparisler")) || [];
-        let durum = masaTutar && parseFloat(masaTutar) > 0 ? "dolu" : "bos";
+
+        let rezerv = JSON.parse(localStorage.getItem("masa_" + i + "_rezerv"));
+
+        let durum = rezerv ? "dolu" : "bos";
 
         let col = document.createElement("div");
         col.className = "col-md-3 mb-3";
 
         col.innerHTML = `
-            <div class="masa-card ${durum === "bos" ? "masa-bos" : "masa-dolu"}" id="card-masa-${i}">
-                <h4 class="mb-1">Masa ${i}</h4>
-                <p class="small text-secondary mb-0">${durum === "bos" ? "Müsait" : "Dolu"}</p>
-                ${durum === "dolu" ? `<div class="tutar">${masaTutar} ₺</div>` : ""}
+            <div class="masa-card ${durum === "bos" ? "masa-bos" : "masa-dolu"}">
+
+                <h5>Masa ${i}</h5>
+
+                <p>${durum === "bos" ? "BOŞ" : "DOLU"}</p>
+
+                ${rezerv ? `
+                    <div class="text-warning small">
+                        👤 ${rezerv.adSoyad || rezerv.isim}<br>
+                        👥 ${rezerv.kisi} kişi
+                    </div>
+
+                    <button class="btn btn-sm btn-danger mt-2"
+                    onclick="rezervIptal(${i})">
+                        İptal Et
+                    </button>
+                ` : ""}
+
             </div>
         `;
 
         masaAlani.appendChild(col);
-        const card = col.querySelector(".masa-card");
 
-        
+        let card = col.querySelector(".masa-card");
+
+        // =========================
+        // 🎯 SEÇME
+        // =========================
         card.addEventListener("click", () => {
-            document.querySelectorAll(".masa-card").forEach(m => m.classList.remove("masa-secili"));
+
+            document.querySelectorAll(".masa-card")
+                .forEach(m => m.classList.remove("masa-secili"));
+
             card.classList.add("masa-secili");
+
             secilenMasa = i;
+
             secBtn.disabled = false;
         });
-
-        
-        card.addEventListener("mouseenter", () => {
-            if (durum === "dolu") {
-                panel.classList.add("aktif");
-                panelBaslik.innerText = "Masa " + i + " Detayı";
-                panelIcerik.innerHTML = "";
-                siparisler.forEach(s => {
-                    panelIcerik.innerHTML += `<div class="d-flex justify-content-between border-bottom border-secondary py-1">
-                        <span>${s.ad}</span> <span>${s.fiyat} ₺</span>
-                    </div>`;
-                });
-            }
-        });
-
-        card.addEventListener("mouseleave", () => panel.classList.remove("aktif"));
     }
 
-    
-    secBtn.addEventListener("click", function() {
-        if (secilenMasa) {
-            
-            let mevcutTutar = localStorage.getItem("masa_" + secilenMasa + "_tutar");
-            if (!mevcutTutar) {
-                localStorage.setItem("masa_" + secilenMasa + "_tutar", "0");
-                localStorage.setItem("masa_" + secilenMasa + "_siparisler", JSON.stringify([]));
-            }
-            localStorage.setItem("aktifMasa", secilenMasa);
+    // =========================
+    // 🟡 MASA ONAY
+    // =========================
+    secBtn.addEventListener("click", () => {
 
-            
-            const seciliKart = document.querySelector(".masa-secili");
-            
-            
-            if (!seciliKart.querySelector(".rezervasyon-yazi")) {
-                const uyari = document.createElement("div");
-                uyari.className = "rezervasyon-yazi";
-                uyari.innerHTML = "✓ Rezervasyon Edilmiştir";
-                seciliKart.appendChild(uyari);
-            }
+        if (!secilenMasa) return;
 
-            
-            secBtn.disabled = true;
-            secBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Yönlendiriliyor...`;
+        let isim = prompt("Ad Soyad:");
+        if (!isim) return alert("İsim zorunlu!");
 
-            
-            setTimeout(() => {
-                window.location.href = "siparis.html";
-            }, 1500);
-        }
+        let kisi = prompt("Kişi sayısı:");
+        if (!kisi || isNaN(kisi)) return alert("Geçerli sayı gir!");
+
+        let data = {
+            adSoyad: isim,
+            kisi: Number(kisi),
+            tarih: new Date().toLocaleString()
+        };
+
+        localStorage.setItem(
+            "masa_" + secilenMasa + "_rezerv",
+            JSON.stringify(data)
+        );
+
+        alert("Masa rezerve edildi!");
+
+        location.reload();
     });
+
+});
+
+
+// =========================
+// ❌ REZERVASYON İPTAL
+// =========================
+function rezervIptal(masaNo){
+
+    let onay = confirm("Rezervasyonu iptal etmek istiyor musun?");
+
+    if(!onay) return;
+
+    localStorage.removeItem("masa_" + masaNo + "_rezerv");
+
+    alert("Rezervasyon iptal edildi!");
+
+    location.reload();
+}     

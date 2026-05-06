@@ -27,9 +27,36 @@ body {
 }
 
 /* ===== MASA / ÜRÜN TEXT ===== */
-.masa-no {
-  color: #ffc107;
-  font-weight: bold;
+body { background:#111; color:white; padding-top:80px; }
+
+.masa-card{
+    background:#222;
+    padding:20px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.masa-card:hover{
+    transform:scale(1.03);
+}
+
+.masa-secili{
+    border:2px solid #ffc107;
+}
+
+.masa-dolu{
+    background:#b02a37;
+}
+
+.masa-bos{
+    background:#198754;
+}
+
+.rezervasyon-yazi{
+    margin-top:10px;
+    font-size:12px;
+    color:#ffc107;
 }
 
 .yemek-adi {
