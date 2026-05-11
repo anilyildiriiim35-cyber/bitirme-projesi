@@ -1,15 +1,16 @@
-!DOCTYPE html>
-
+<!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Urban Kasa Restaurant</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
 
+<title>Urban Kasa Restaurant</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -32,12 +33,12 @@
 
       <ul class="navbar-nav ms-auto align-items-center">
 
-       <li class="nav-item">
+        <li class="nav-item">
           <a class="nav-link" href="index.html">Ana Sayfa</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="menu.html">Menü</a>
+          <a class="nav-link" href="menu.html">menü</a>
         </li>
 
         <li class="nav-item">
@@ -54,125 +55,28 @@
 
         <li class="nav-item">
           <a class="nav-link" href="products.html">Ürün Yönetimi</a>
-      
         </li>
-
-        
-
-      
 
       </ul>
 
     </div>
   </div>
 </nav>
+<div class="hero">
 
-<div class="container my-5">
+    <div class="hero-content">
 
-  <div class="row align-items-center">
+        <h1>Urban POS Restaurant</h1>
 
-    <div class="col-md-6">
+        <p>Lezzetin ve modern deneyimin buluştuğu yer.</p>
 
-      <h1>Lezzetin Şehri</h1>
-
-      <p>En taze yemekler.</p>
-
-      <button class="btn btn-hero" onclick="window.location.href='MASA BİLGİ.html'">
-
-
-</button>
+        <a href="tables.html" class="reserve-btn">
+            Rezervasyon Yaptır
+        </a>
 
     </div>
-
-    <div class="col-md-6">
-
-      <img src="ChatGPT Image 2 Mar 2026 14_18_07.png" class="img-fluid rounded" alt="Restaurant">
-
-     
-
-    </div>
-
-  </div>
 
 </div>
 
-<div class="container my-5">
-
-  <h2 class="mb-4">Kategoriler</h2>
-
-  <div class="row g-4">
-
-    <div class="col-md-4">
-
-      <div class="card bg-dark text-light">
-
-        <img src="ChatGPT Image 2 Mar 2026 14_20_35.png" class="card-img-top" alt="Yiyecekler">
-
-        <div class="card-body text-center">
-
-          <h5 class="card-title">Yiyecekler</h5>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="col-md-4">
-
-      <div class="card bg-dark text-light">
-
-        <img src="ChatGPT Image 2 Mar 2026 14_23_09.png" class="card-img-top" alt="İçecekler">
-
-        <div class="card-body text-center">
-
-          <h5 class="card-title">İçecekler</h5>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="col-md-4">
-
-      <div class="card bg-dark text-light">
-
-        <img src="ChatGPT Image 2 Mar 2026 14_22_02.png" class="card-img-top" alt="Tatlılar">
-
-        <div class="card-body text-center">
-
-          <h5 class="card-title">Tatlılar</h5>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-<script>
-
-
-
-let kullanici = localStorage.getItem("kullanici");
-
-
-
-if(kullanici){
-
-document.getElementById("kullaniciBtn").innerText = kullanici;
-
-document.getElementById("kullaniciBtn").href="#";
-
-}
-
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>   
-<html>
+</body>
+</html>

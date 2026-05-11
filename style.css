@@ -1,249 +1,168 @@
-/* ===== GENEL ===== */
-body {
-  background: #0f0f0f;
-  color: #e0e0e0;
-  font-family: 'Segoe UI', sans-serif;
+/* =========================================
+   GENEL
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* ===== NAVBAR / GENEL BUTON ===== */
-.btn-hero {
-  background-color: orange;
-  color: #fff;
+body{
+    background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
+    color:white;
+    font-family:'Segoe UI', sans-serif;
+    min-height:100vh;
 }
 
-/* ===== KART SİSTEMİ ===== */
-.card {
-  background: #252525;
-  border: 1px solid #333;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
+/* =========================================
+   NAVBAR / GENEL BUTON
+========================================= */
 
-.card:hover {
-  border-color: #ffc107;
-  transform: scale(1.03);
-}
-
-/* ===== MASA / ÜRÜN TEXT ===== */
-body { background:#111; color:white; padding-top:80px; }
-
-.masa-card{
-    background:#222;
-    padding:20px;
+.btn-hero{
+    background:linear-gradient(90deg,#ffc107,#ff9800);
+    color:black;
+    font-weight:bold;
+    padding:12px 35px;
+    border:none;
     border-radius:12px;
-    cursor:pointer;
-    transition:0.3s;
+    transition:.3s;
 }
 
-.masa-card:hover{
-    transform:scale(1.03);
+.btn-hero:hover{
+    transform:translateY(-3px);
+    box-shadow:0 5px 15px rgba(255,193,7,.4);
 }
 
-.masa-secili{
-    border:2px solid #ffc107;
+/* =========================================
+   HERO ALANI
+========================================= */
+
+.hero{
+    width:100%;
+    height:100vh;
+    background:
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url("ChatGPT Image 2 Mar 2026 14_18_07.png");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
 }
 
-.masa-dolu{
-    background:#b02a37;
-}
-
-.masa-bos{
-    background:#198754;
-}
-
-.rezervasyon-yazi{
-    margin-top:10px;
-    font-size:12px;
+.hero-content h1{
+    font-size:70px;
+    font-weight:700;
+    margin-bottom:20px;
     color:#ffc107;
 }
 
-.yemek-adi {
-  font-weight: 800;
-  text-transform: uppercase;
-  min-height: 45px;
+.hero-content p{
+    font-size:22px;
+    margin-bottom:35px;
+    color:#f1f1f1;
 }
 
-.fiyat-text {
-  color: #ffc107;
-  font-weight: bold;
+.reserve-btn{
+    padding:15px 40px;
+    border:none;
+    border-radius:50px;
+    background:#ffc107;
+    color:black;
+    font-size:20px;
+    font-weight:bold;
+    text-decoration:none;
+    display:inline-block;
+    transition:.3s;
 }
 
-/* ===== BUTONLAR ===== */
-.btn-ekle {
-  background: #ffc107;
-  color: black;
-  width: 100%;
-  border: none;
-  font-weight: bold;
-  padding: 8px;
-  border-radius: 8px;
+.reserve-btn:hover{
+    background:white;
+    transform:scale(1.05);
+    color:black;
 }
 
-.btn-ekle:hover {
-  background: #ffb300;
-}
-
-/* ===== SİPARİŞ PANELİ ===== */
-.siparis-alani {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 320px;
-  height: 100%;
-  background: #161616;
-  border-left: 4px solid #ffc107;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-/* ===== ÖDEME BUTONU ===== */
-.btn-odeme {
-  background: #28a745;
-  color: white;
-  width: 100%;
-  margin-top: 20px;
-  padding: 12px;
-  font-weight: bold;
-  border-radius: 10px;
-  border: none;
-}
-
-.btn-odeme:hover {
-  background: #218838;
-}
-
-/* ===== ÖDEME SEÇİM BUTONLARI ===== */
-.pay-btn {
-  background: #252525;
-  border: 2px solid #333;
-  color: white;
-  padding: 18px;
-  font-size: 18px;
-  border-radius: 12px;
-  transition: 0.3s;
-  font-weight: 600;
-  width: 100%;
-}
-
-.pay-btn:hover {
-  border-color: #ffc107;
-  color: #ffc107;
-  transform: scale(1.03);
-}
-
-/* ===== MODAL ===== */
-.modal-content {
-  background: #1b1b1b;
-  color: white;
-  border: 1px solid #ffc107;
-  border-radius: 15px;
-}
-body { 
-            background: linear-gradient(135deg, #0f0f0f, #1c1c1c); 
-            color: white; 
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .masa-card {
-            background: #1e1e1e; 
-            border-radius: 14px; 
-            padding: 25px; 
-            margin: 10px;
-            cursor: pointer; 
-            transition: .3s; 
-            text-align: center;
-            position: relative;
-            border: 2px solid transparent;
-        }
-
-        .masa-card:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 0 15px rgba(255, 193, 7, 0.3); 
-        }
-
-        .masa-bos { border-left: 6px solid #28a745; }
-        .masa-dolu { border-left: 6px solid #dc3545; }
-
-        .masa-secili { 
-            border: 2px solid #ffc107 !important; 
-            box-shadow: 0 0 20px #ffc107; 
-        }
-
-        .tutar { 
-            font-size: 18px; 
-            font-weight: bold; 
-            color: #ffc107; 
-            margin-top: 10px;
-        }
-
-        /* Yeni eklenen rezervasyon yazısı stili */
-        .rezervasyon-yazi {
-            color: #00ecff;
-            font-size: 13px;
-            font-weight: bold;
-            margin-top: 10px;
-            text-transform: uppercase;
-            animation: pulse 1s infinite alternate;
-        }
-
-        @keyframes pulse {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
-        }
-
-        .siparis-panel {
-            position: fixed; 
-            top: 20px; 
-            right: -320px; 
-            width: 300px; 
-            height: 90%;
-            background: #1a1a1a; 
-            border-left: 3px solid #ffc107;
-            padding: 15px; 
-            transition: .3s; 
-            overflow-y: auto;
-            z-index: 1000;
-        }
-
-        .siparis-panel.aktif { right: 0; }
-
-        .btn-hero {
-            background: linear-gradient(90deg, #ffc107, #ff9800);
-            color: black; 
-            font-weight: bold; 
-            padding: 12px 35px;
-            border-radius: 12px; 
-            border: none;
-            transition: 0.3s;
-        }
-
-        .btn-hero:disabled {
-            background: #444;
-            color: #888;
-        }
-
-        .btn-hero:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
-        }
-
-body{
-    background:#0f0f0f;
-    color:white;
-}
+/* =========================================
+   CARD SİSTEMİ
+========================================= */
 
 .card{
-    background:#1e1e1e;
+    background:#1f1f1f;
     border:1px solid #333;
-    border-radius:12px;
+    border-radius:15px;
+    color:white;
+    transition:.3s;
+    overflow:hidden;
 }
 
-.btn-filter{
-    margin-right:8px;
-    margin-bottom:10px;
+.card:hover{
+    transform:scale(1.03);
+    border-color:#ffc107;
+    box-shadow:0 10px 25px rgba(0,0,0,.5);
+}
+
+/* =========================================
+   MASALAR
+========================================= */
+
+.masa-card{
+    background:#1e1e1e;
+    border-radius:14px;
+    padding:25px;
+    margin:10px;
+    cursor:pointer;
+    transition:.3s;
+    text-align:center;
+    border:2px solid transparent;
+}
+
+.masa-card:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 15px rgba(255,193,7,.3);
+}
+
+.masa-bos{
+    border-left:6px solid #28a745;
+}
+
+.masa-dolu{
+    border-left:6px solid #dc3545;
+}
+
+.masa-secili{
+    border:2px solid #ffc107 !important;
+    box-shadow:0 0 20px #ffc107;
+}
+
+.rezervasyon-yazi{
+    color:#00ecff;
+    font-size:13px;
+    font-weight:bold;
+    margin-top:10px;
+    text-transform:uppercase;
+    animation:pulse 1s infinite alternate;
+}
+
+@keyframes pulse{
+    from{opacity:.5;}
+    to{opacity:1;}
+}
+
+/* =========================================
+   ÜRÜN / MENÜ
+========================================= */
+
+.yemek-adi{
+    font-weight:800;
+    text-transform:uppercase;
+    min-height:45px;
+}
+
+.fiyat-text{
+    color:#ffc107;
+    font-weight:bold;
 }
 
 .search-box{
@@ -253,143 +172,161 @@ body{
     border-radius:10px;
     padding:10px;
 }
-     body {
-    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-    color: #f1f1f1;
-    padding: 40px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+/* =========================================
+   SİPARİŞ PANELİ
+========================================= */
+
+.siparis-panel{
+    position:fixed;
+    top:20px;
+    right:-320px;
+    width:300px;
+    height:90%;
+    background:#1a1a1a;
+    border-left:3px solid #ffc107;
+    padding:15px;
+    transition:.3s;
+    overflow-y:auto;
+    z-index:1000;
 }
 
-/* RAPOR KARTI */
-.report-card {
-    background: #1a1a1a;
-    border-radius: 16px;
-    padding: 30px;
-    border: 1px solid rgba(255, 193, 7, 0.5);
-    margin-bottom: 25px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-    transition: 0.3s;
+.siparis-panel.aktif{
+    right:0;
 }
 
-.report-card:hover {
-    transform: translateY(-3px);
+.siparis-alani{
+    position:fixed;
+    right:0;
+    top:0;
+    width:320px;
+    height:100%;
+    background:#161616;
+    border-left:4px solid #ffc107;
+    padding:20px;
+    overflow-y:auto;
 }
 
-/* ANALİZ KARTLARI */
-.analiz-card {
-    background: #222;
-    border-radius: 14px;
-    padding: 22px;
-    border-left: 5px solid #ffc107;
-    transition: all 0.3s ease;
-    height: 100%;
-}
+/* =========================================
+   BUTONLAR
+========================================= */
 
-.analiz-card:hover {
-    transform: translateY(-6px) scale(1.01);
-    background: #2a2a2a;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-/* TABLO */
-.table-dark {
-    --bs-table-bg: #222;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-/* TOPLAM KUTUSU */
-.total-box {
-    font-size: 2rem;
-    color: #28a745;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-/* TÜR METİN */
-.tur-metin {
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    opacity: 0.8;
-}
-
-/* ÖDEME RENKLERİ */
-.text-nakit {
-    color: #28a745;
-}
-
-.text-kart {
-    color: #0d6efd;
-}
-
-/* INPUT */
-.form-control-dark {
-    background: #2b2b2b;
-    border: 1px solid #444;
-    color: #fff;
-    border-radius: 8px;
-    transition: 0.2s;
-}
-
-.form-control-dark:focus {
-    background: #333;
-    border-color: #ffc107;
-    color: white;
-    box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
-}
-
-/* SCROLLBAR (şık görünüm) */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #444;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #ffc107;
-}
-body{
-    background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
-    color:white;
-    font-family:Segoe UI;
-}
-
-
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
-.title{
-    font-size:28px;
+.btn-ekle{
+    background:#ffc107;
+    color:black;
+    width:100%;
+    border:none;
     font-weight:bold;
-    color:#ffc107;
+    padding:8px;
+    border-radius:8px;
+    transition:.3s;
 }
 
-.nav-btns button{
+.btn-ekle:hover{
+    background:#ffb300;
+}
+
+.btn-odeme{
+    background:#28a745;
+    color:white;
+    width:100%;
+    margin-top:20px;
+    padding:12px;
+    font-weight:bold;
+    border:none;
+    border-radius:10px;
+}
+
+.btn-odeme:hover{
+    background:#218838;
+}
+
+.pay-btn{
+    background:#252525;
+    border:2px solid #333;
+    color:white;
+    padding:18px;
+    font-size:18px;
     border-radius:12px;
-    padding:10px 18px;
+    transition:.3s;
     font-weight:600;
+    width:100%;
 }
 
-
-.card{
-    background:#1f1f1f;
-    border:1px solid #333;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.4);
+.pay-btn:hover{
+    border-color:#ffc107;
+    color:#ffc107;
+    transform:scale(1.03);
 }
 
+/* =========================================
+   RAPORLAR
+========================================= */
+
+.report-card{
+    background:#1a1a1a;
+    border-radius:16px;
+    padding:30px;
+    border:1px solid rgba(255,193,7,.5);
+    margin-bottom:25px;
+    box-shadow:0 15px 40px rgba(0,0,0,.6);
+}
+
+.analiz-card{
+    background:#222;
+    border-radius:14px;
+    padding:22px;
+    border-left:5px solid #ffc107;
+    transition:.3s;
+    height:100%;
+}
+
+.analiz-card:hover{
+    transform:translateY(-6px);
+    background:#2a2a2a;
+}
+
+.total-box{
+    font-size:2rem;
+    color:#28a745;
+    font-weight:bold;
+}
+
+.text-nakit{
+    color:#28a745;
+}
+
+.text-kart{
+    color:#0d6efd;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+input,
+select{
+    background:#111 !important;
+    color:white !important;
+    border:1px solid #333 !important;
+}
+
+input:focus,
+select:focus{
+    border-color:#ffc107 !important;
+    box-shadow:none !important;
+}
+
+.form-control-dark{
+    background:#2b2b2b;
+    border:1px solid #444;
+    color:#fff;
+    border-radius:8px;
+}
+
+/* =========================================
+   TABLO
+========================================= */
 
 table{
     color:white;
@@ -399,21 +336,27 @@ table{
     color:#ffc107;
 }
 
-input,select{
-    background:#111 !important;
-    color:white !important;
-    border:1px solid #333 !important;
+.table-dark{
+    --bs-table-bg:#222;
 }
 
-input:focus{
-    box-shadow:none !important;
-    border-color:#ffc107 !important;
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar{
+    width:8px;
 }
 
-.btn-action{
+::-webkit-scrollbar-track{
+    background:#1a1a1a;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#444;
     border-radius:10px;
 }
 
-.stock-switch{
-    transform:scale(1.2);
+::-webkit-scrollbar-thumb:hover{
+    background:#ffc107;
 }
