@@ -8,11 +8,12 @@ const PAYMENT_KEY = "urban_payments";
 
 
 // =========================
-// 📥 GENEL STORAGE
+// 📥 STORAGE CORE
 // =========================
 function getData(key, def = []) {
     try {
-        return JSON.parse(localStorage.getItem(key)) || def;
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : def;
     } catch {
         return def;
     }
@@ -28,7 +29,7 @@ function removeData(key) {
 
 
 // =========================
-// 📦 ÜRÜNLER
+// 📦 PRODUCTS
 // =========================
 function getProducts() {
     return getData(PRODUCT_KEY);
@@ -40,7 +41,7 @@ function saveProducts(data) {
 
 
 // =========================
-// 📂 KATEGORİLER
+// 📂 CATEGORIES
 // =========================
 function getCategories() {
     return getData(CATEGORY_KEY);
@@ -52,7 +53,7 @@ function saveCategories(data) {
 
 
 // =========================
-// 🪑 MASALAR
+// 🪑 TABLES
 // =========================
 function getTables() {
     return getData(TABLE_KEY);
@@ -64,7 +65,7 @@ function saveTables(data) {
 
 
 // =========================
-// 💳 ÖDEMELER
+// 💳 PAYMENTS
 // =========================
 function getPayments() {
     return getData(PAYMENT_KEY);
@@ -76,7 +77,7 @@ function savePayments(data) {
 
 
 // =========================
-// 🌱 SEED DATA
+// 🌱 SEED DATA (FULL FIX)
 // =========================
 function seedData() {
 
@@ -106,12 +107,14 @@ function seedData() {
         ]);
     }
 
-    // MASALAR
+    // 🪑 MASALAR (FIX: min 5 masa)
     if (getTables().length === 0) {
         saveTables([
             { id: 1, tableNo: 1, status: "empty", orderItems: [] },
             { id: 2, tableNo: 2, status: "empty", orderItems: [] },
-            { id: 3, tableNo: 3, status: "empty", orderItems: [] }
+            { id: 3, tableNo: 3, status: "empty", orderItems: [] },
+            { id: 4, tableNo: 4, status: "empty", orderItems: [] },
+            { id: 5, tableNo: 5, status: "empty", orderItems: [] }
         ]);
     }
 
@@ -123,31 +126,31 @@ function seedData() {
 
 
 // =========================
-// 📌 KATEGORİ SELECT DOLDUR
+// 📦 CATEGORY HELPERS
 // =========================
-function fillCategorySelect() {
-
-    const select = document.getElementById("kat");
-    if (!select) return;
-
-    let cats = getCategories();
-
-    select.innerHTML = `<option value="">Kategori Seç</option>`;
-
-    cats.forEach(c => {
-        select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-    });
+function getCategoryName(id) {
+    const c = getCategories().find(x => x.id === id);
+    return c ? c.name : "Bilinmiyor";
 }
 
 
 // =========================
-// ➕ ÜRÜN EKLE
+// 📦 PRODUCT CREATE (SAFE)
 // =========================
 function addProduct(name, price, stock, categoryId) {
 
-    if (!name || price <= 0 || stock < 0) return;
+    if (!name || price <= 0 || stock <= 0 || !categoryId) {
+        alert("Hatalı ürün bilgisi");
+        return;
+    }
 
     let products = getProducts();
+
+    const exists = products.find(p => p.name.toLowerCase() === name.toLowerCase());
+    if (exists) {
+        alert("Bu ürün zaten var");
+        return;
+    }
 
     products.push({
         id: "p_" + Date.now(),
@@ -155,7 +158,7 @@ function addProduct(name, price, stock, categoryId) {
         price: Number(price),
         stock: Number(stock),
         categoryId,
-        inStock: Number(stock) > 0
+        inStock: true
     });
 
     saveProducts(products);
@@ -163,28 +166,16 @@ function addProduct(name, price, stock, categoryId) {
 
 
 // =========================
-// 🏷 KATEGORİ ADI
+// 📉 STOCK DECREASE (GLOBAL SAFE)
 // =========================
-function getCategoryName(id) {
-
-    let cats = getCategories();
-    let c = cats.find(x => x.id === id);
-
-    return c ? c.name : "Bilinmiyor";
-}
-
-
-// =========================
-// 📉 STOK DÜŞ
-// =========================
-function decreaseStock(id, qty = 1) {
+function decreaseStock(productId, qty = 1) {
 
     let products = getProducts();
-    let p = products.find(x => x.id === id);
+    let p = products.find(x => x.id === productId);
 
     if (!p || p.stock < qty) return false;
 
-    p.stock -= qty;
+    p.stock = Math.max(0, p.stock - qty);
     p.inStock = p.stock > 0;
 
     saveProducts(products);
@@ -193,12 +184,12 @@ function decreaseStock(id, qty = 1) {
 
 
 // =========================
-// 📈 STOK ARTIR
+// 📈 STOCK INCREASE
 // =========================
-function increaseStock(id, qty = 1) {
+function increaseStock(productId, qty = 1) {
 
     let products = getProducts();
-    let p = products.find(x => x.id === id);
+    let p = products.find(x => x.id === productId);
 
     if (!p) return;
 
@@ -210,9 +201,97 @@ function increaseStock(id, qty = 1) {
 
 
 // =========================
+// 🪑 TABLE ORDER HELPERS (CRITICAL FIX)
+// =========================
+function getTable(tableId) {
+    return getTables().find(t => t.id === tableId);
+}
+
+function saveTable(updatedTable) {
+
+    let tables = getTables();
+
+    tables = tables.map(t =>
+        t.id === updatedTable.id ? updatedTable : t
+    );
+
+    saveTables(tables);
+}
+
+
+// =========================
+// 🛒 ADD TO TABLE ORDER
+// =========================
+function addToTable(tableId, productId) {
+
+    let tables = getTables();
+    let table = tables.find(t => t.id === tableId);
+
+    if (!table) return;
+
+    let product = getProducts().find(p => p.id === productId);
+    if (!product || product.stock <= 0) return alert("Stok yok");
+
+    let item = table.orderItems.find(i => i.productId === productId);
+
+    if (item) {
+        item.quantity++;
+        item.lineTotal += product.price;
+    } else {
+        table.orderItems.push({
+            productId,
+            name: product.name,
+            unitPrice: product.price,
+            quantity: 1,
+            lineTotal: product.price
+        });
+    }
+
+    table.status = "occupied";
+
+    saveTable(table);
+}
+
+
+// =========================
+// 💳 PAYMENT (FULL FIX)
+// =========================
+function createPayment(tableId, paymentType) {
+
+    let table = getTable(tableId);
+    if (!table || table.orderItems.length === 0) return false;
+
+    let total = table.orderItems.reduce((a, b) => a + b.lineTotal, 0);
+
+    // stock düş
+    table.orderItems.forEach(i => {
+        decreaseStock(i.productId, i.quantity);
+    });
+
+    let payment = {
+        id: "pay_" + Date.now(),
+        tableId,
+        paymentType,
+        amount: total,
+        items: table.orderItems,
+        paidAt: new Date().toISOString()
+    };
+
+    let payments = getPayments();
+    payments.push(payment);
+    savePayments(payments);
+
+    // masa temizle
+    table.orderItems = [];
+    table.status = "empty";
+
+    saveTable(table);
+
+    return true;
+}
+
+
+// =========================
 // 🚀 INIT
 // =========================
-document.addEventListener("DOMContentLoaded", () => {
-    seedData();
-    fillCategorySelect();
-});
+document.addEventListener("DOMContentLoaded", seedData);

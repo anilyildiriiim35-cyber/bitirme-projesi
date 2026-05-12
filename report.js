@@ -4,7 +4,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const input = document.getElementById("tarihSecici");
-
     const bugun = new Date().toISOString().split("T")[0];
 
     if (input) input.value = bugun;
@@ -30,9 +29,7 @@ function tariheGoreFiltrele() {
 // =========================
 function raporuYukle(filtreTarih) {
 
-    // 🔥 TEK KAYNAK
-    const rapor =
-        JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
+    const rapor = JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
 
     const tablo = document.getElementById("raporTablosu");
     const toplamCiroEl = document.getElementById("toplamCiro");
@@ -48,13 +45,10 @@ function raporuYukle(filtreTarih) {
 
 
     // =========================
-    // 🔎 TARİH FİLTRE (SAFE)
+    // 🔎 TARİH FİLTRE
     // =========================
     const veri = rapor.filter(x => {
-
-        const tarih =
-            (x.tarih || x.paidAt || "").split("T")[0];
-
+        const tarih = (x.tarih || "").split("T")[0];
         return tarih === filtreTarih;
     });
 
@@ -65,59 +59,46 @@ function raporuYukle(filtreTarih) {
     if (veri.length === 0) {
 
         tablo.innerHTML = `
-        <tr>
-            <td colspan="4" class="text-center text-muted py-4">
-                Bu tarihte işlem bulunamadı
-            </td>
-        </tr>`;
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">
+                    Bu tarihte işlem bulunamadı
+                </td>
+            </tr>`;
 
         toplamCiroEl.innerText = "0 ₺";
-
         istatistikGuncelle(0, 0, {}, 0);
-
         return;
     }
 
 
     // =========================
-    // 📋 TABLO DOLDUR
+    // 📋 RENDER
     // =========================
     veri.forEach(x => {
 
-        const tutar = Number(x.tutar || x.amount || 0);
+        const tutar = Number(x.tutar || 0);
+        const tur = x.tur;
 
         toplam += tutar;
-
-        const tur = x.tur || x.paymentType || "-";
 
         if (tur === "NAKİT") nakit += tutar;
         else kart += tutar;
 
 
-        // =========================
-        // 🍽 ÜRÜN SAYACI (SAFE)
-        // =========================
-        const items = x.urunler || x.items || [];
+        // 🍽 ürün sayacı
+        (x.urunler || []).forEach(u => {
 
-        if (Array.isArray(items)) {
+            const ad = u.ad;
+            const adet = u.adet || 1;
 
-            items.forEach(u => {
-
-                const ad = u.ad || u.name || "Bilinmeyen";
-                const adet = u.adet || u.quantity || 1;
-
-                urunler[ad] = (urunler[ad] || 0) + adet;
-            });
-        }
+            urunler[ad] = (urunler[ad] || 0) + adet;
+        });
 
 
-        // =========================
-        // 🧾 TABLO SATIRI
-        // =========================
         tablo.innerHTML += `
         <tr>
-            <td>${new Date(x.tarih || x.paidAt).toLocaleTimeString()}</td>
-            <td>Masa ${x.masa || x.tableId || "-"}</td>
+            <td>${new Date(x.tarih).toLocaleTimeString()}</td>
+            <td>Masa ${x.masa}</td>
             <td class="${tur === "NAKİT" ? "text-success" : "text-primary"}">
                 ${tur}
             </td>
@@ -162,10 +143,13 @@ function istatistikGuncelle(nakit, kart, urunler, toplam) {
 
         if (nY) nY.innerText = "%" + Math.round(n);
         if (kY) kY.innerText = "%" + Math.round(k);
+
     } else {
 
         if (nBar) nBar.style.width = "0%";
         if (kBar) kBar.style.width = "0%";
+        if (nY) nY.innerText = "%0";
+        if (kY) kY.innerText = "%0";
     }
 
 
@@ -195,9 +179,7 @@ function istatistikGuncelle(nakit, kart, urunler, toplam) {
 function temizle() {
 
     if (confirm("Tüm raporlar silinsin mi?")) {
-
         localStorage.removeItem("gun_sonu_raporu");
-
         location.reload();
     }
 }
