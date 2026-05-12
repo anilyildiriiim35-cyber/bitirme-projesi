@@ -9,15 +9,20 @@
 }
 
 body{
-    background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
+    background:linear-gradient(135deg,#0f0f0f,#1c1c1c);
     color:white;
-    font-family:'Segoe UI', sans-serif;
+    font-family:'Segoe UI',sans-serif;
     min-height:100vh;
+    overflow-x:hidden;
 }
 
 /* =========================================
-   NAVBAR / GENEL BUTON
+   NAVBAR
 ========================================= */
+
+.navbar{
+    z-index:9999;
+}
 
 .btn-hero{
     background:linear-gradient(90deg,#ffc107,#ff9800);
@@ -35,7 +40,7 @@ body{
 }
 
 /* =========================================
-   HERO ALANI
+   HERO
 ========================================= */
 
 .hero{
@@ -44,8 +49,10 @@ body{
     background:
     linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
     url("ChatGPT Image 2 Mar 2026 14_18_07.png");
+
     background-size:cover;
     background-position:center;
+
     display:flex;
     justify-content:center;
     align-items:center;
@@ -65,27 +72,8 @@ body{
     color:#f1f1f1;
 }
 
-.reserve-btn{
-    padding:15px 40px;
-    border:none;
-    border-radius:50px;
-    background:#ffc107;
-    color:black;
-    font-size:20px;
-    font-weight:bold;
-    text-decoration:none;
-    display:inline-block;
-    transition:.3s;
-}
-
-.reserve-btn:hover{
-    background:white;
-    transform:scale(1.05);
-    color:black;
-}
-
 /* =========================================
-   CARD SİSTEMİ
+   KART
 ========================================= */
 
 .card{
@@ -94,117 +82,114 @@ body{
     border-radius:15px;
     color:white;
     transition:.3s;
-    overflow:hidden;
 }
 
 .card:hover{
-    transform:scale(1.03);
+    transform:translateY(-4px);
     border-color:#ffc107;
-    box-shadow:0 10px 25px rgba(0,0,0,.5);
 }
 
 /* =========================================
    MASALAR
 ========================================= */
 
+#masaAlani{
+    position:relative;
+    z-index:10;
+}
+
 .masa-card{
-    background:#1e1e1e;
-    border-radius:14px;
-    padding:25px;
-    margin:10px;
     cursor:pointer;
+    border-radius:15px;
     transition:.3s;
+    padding:25px;
     text-align:center;
-    border:2px solid transparent;
+    border:none;
 }
 
 .masa-card:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 15px rgba(255,193,7,.3);
+    transform:scale(1.03);
 }
 
 .masa-bos{
-    border-left:6px solid #28a745;
+    background:#198754;
+    color:white;
 }
 
 .masa-dolu{
-    border-left:6px solid #dc3545;
+    background:#dc3545;
+    color:white;
+}
+
+.masa-rezerve{
+    background:#0dcaf0;
+    color:black;
 }
 
 .masa-secili{
-    border:2px solid #ffc107 !important;
+    border:3px solid #ffc107 !important;
     box-shadow:0 0 20px #ffc107;
 }
 
-.rezervasyon-yazi{
-    color:#00ecff;
-    font-size:13px;
-    font-weight:bold;
-    margin-top:10px;
-    text-transform:uppercase;
-    animation:pulse 1s infinite alternate;
-}
-
-@keyframes pulse{
-    from{opacity:.5;}
-    to{opacity:1;}
-}
-
 /* =========================================
-   ÜRÜN / MENÜ
+   MENÜ
 ========================================= */
 
+#menuAlani .card{
+    min-height:220px;
+}
+
 .yemek-adi{
-    font-weight:800;
-    text-transform:uppercase;
+    font-weight:bold;
+    font-size:18px;
     min-height:45px;
 }
 
 .fiyat-text{
     color:#ffc107;
     font-weight:bold;
-}
-
-.search-box{
-    background:#1b1b1b;
-    border:1px solid #333;
-    color:white;
-    border-radius:10px;
-    padding:10px;
+    font-size:20px;
 }
 
 /* =========================================
    SİPARİŞ PANELİ
 ========================================= */
 
-.siparis-panel{
-    position:fixed;
-    top:20px;
-    right:-320px;
-    width:300px;
-    height:90%;
-    background:#1a1a1a;
-    border-left:3px solid #ffc107;
-    padding:15px;
-    transition:.3s;
-    overflow-y:auto;
-    z-index:1000;
-}
-
-.siparis-panel.aktif{
-    right:0;
-}
-
 .siparis-alani{
+
     position:fixed;
-    right:0;
-    top:0;
+
+    right:20px;
+    top:90px;
+
     width:320px;
-    height:100%;
-    background:#161616;
-    border-left:4px solid #ffc107;
+    height:calc(100vh - 110px);
+
+    background:#1c1c1c;
+
+    border:2px solid #ffc107;
+    border-radius:15px;
+
     padding:20px;
+
     overflow-y:auto;
+
+    z-index:1;
+}
+
+.siparis-item{
+    background:#252525;
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.siparis-item button{
+    border:none;
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    font-weight:bold;
 }
 
 /* =========================================
@@ -214,11 +199,11 @@ body{
 .btn-ekle{
     background:#ffc107;
     color:black;
-    width:100%;
     border:none;
+    width:100%;
+    padding:10px;
+    border-radius:10px;
     font-weight:bold;
-    padding:8px;
-    border-radius:8px;
     transition:.3s;
 }
 
@@ -227,40 +212,37 @@ body{
 }
 
 .btn-odeme{
-    background:#28a745;
+    background:#198754;
     color:white;
-    width:100%;
-    margin-top:20px;
-    padding:12px;
-    font-weight:bold;
     border:none;
+    width:100%;
+    padding:12px;
     border-radius:10px;
+    font-weight:bold;
+    margin-top:20px;
 }
 
 .btn-odeme:hover{
-    background:#218838;
+    background:#157347;
 }
 
 .pay-btn{
-    background:#252525;
-    border:2px solid #333;
+    background:#2a2a2a;
     color:white;
-    padding:18px;
-    font-size:18px;
+    border:2px solid #333;
+    padding:15px;
     border-radius:12px;
+    font-weight:bold;
     transition:.3s;
-    font-weight:600;
-    width:100%;
 }
 
 .pay-btn:hover{
     border-color:#ffc107;
     color:#ffc107;
-    transform:scale(1.03);
 }
 
 /* =========================================
-   RAPORLAR
+   RAPOR
 ========================================= */
 
 .report-card{
@@ -269,7 +251,6 @@ body{
     padding:30px;
     border:1px solid rgba(255,193,7,.5);
     margin-bottom:25px;
-    box-shadow:0 15px 40px rgba(0,0,0,.6);
 }
 
 .analiz-card{
@@ -277,27 +258,6 @@ body{
     border-radius:14px;
     padding:22px;
     border-left:5px solid #ffc107;
-    transition:.3s;
-    height:100%;
-}
-
-.analiz-card:hover{
-    transform:translateY(-6px);
-    background:#2a2a2a;
-}
-
-.total-box{
-    font-size:2rem;
-    color:#28a745;
-    font-weight:bold;
-}
-
-.text-nakit{
-    color:#28a745;
-}
-
-.text-kart{
-    color:#0d6efd;
 }
 
 /* =========================================
@@ -317,13 +277,6 @@ select:focus{
     box-shadow:none !important;
 }
 
-.form-control-dark{
-    background:#2b2b2b;
-    border:1px solid #444;
-    color:#fff;
-    border-radius:8px;
-}
-
 /* =========================================
    TABLO
 ========================================= */
@@ -334,10 +287,6 @@ table{
 
 .table thead{
     color:#ffc107;
-}
-
-.table-dark{
-    --bs-table-bg:#222;
 }
 
 /* =========================================
@@ -359,4 +308,48 @@ table{
 
 ::-webkit-scrollbar-thumb:hover{
     background:#ffc107;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:992px){
+
+    .siparis-alani{
+        position:static;
+        width:100%;
+        height:auto;
+        margin-top:20px;
+    }
+
+    .container{
+        margin-right:0 !important;
+    }
+
+    .hero-content h1{
+        font-size:42px;
+    }
+
+    .hero-content p{
+        font-size:18px;
+    }
+}
+.reserve-btn{
+    display:inline-block;
+    padding:15px 40px;
+    background:#ffc107;
+    color:black;
+    font-size:20px;
+    font-weight:bold;
+    border-radius:50px;
+    text-decoration:none;
+    transition:.3s;
+    margin-top:20px;
+}
+
+.reserve-btn:hover{
+    background:white;
+    transform:scale(1.05);
+    color:black;
 }

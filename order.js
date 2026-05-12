@@ -310,3 +310,23 @@ function odemeYap(tip) {
 
     alert("Ödeme alındı!");
 }
+function renderSiparisMasalar() {
+
+    const masalar = getMasalar();
+
+    console.log("MASALAR:", masalar);
+
+    for (let i = 1; i <= 12; i++) {
+
+        if (masalar[i]) {
+            console.log(`🟢 Masa ${i} DOLU`);
+        } else {
+            console.log(`⚪ Masa ${i} BOŞ`);
+        }
+    }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    masaOlustur();
+    menuYukle();
+    if (aktifMasa) siparisGoster();
+});

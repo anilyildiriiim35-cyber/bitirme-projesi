@@ -1,123 +1,224 @@
 // ======================================================
-// 🚀 MASA SİSTEMİ (REFRACTORED)
+// 🚀 SAYFA YÜKLENDİĞİNDE ÇALIŞAN ANA SİSTEM
 // ======================================================
-
+// Bu yapı sayesinde HTML tamamen yüklendikten sonra
+// JavaScript kodları çalışır.
+// Böylece element bulunamadı hataları önlenir.
 document.addEventListener("DOMContentLoaded", () => {
 
+    // ======================================================
+    // 📌 HTML ELEMENTLERİNİ SEÇME
+    // ======================================================
+    // JavaScript içinde kullanacağımız HTML alanlarını seçiyoruz.
     const masaAlani = document.getElementById("masaAlani");
     const secBtn = document.getElementById("secBtn");
 
+    // ======================================================
+    // ⚠️ GÜVENLİK KONTROLÜ
+    // ======================================================
+    // Eğer HTML içinde masaAlani yoksa sistem hata vermesin.
     if (!masaAlani) {
         console.error("masaAlani bulunamadı!");
         return;
     }
 
+    // ======================================================
+    // 🪑 SEÇİLEN MASA BİLGİSİ
+    // ======================================================
+    // Kullanıcının hangi masayı seçtiğini tutar.
     let secilenMasa = null;
 
     // ======================================================
     // 🪑 MASALARI OLUŞTUR
     // ======================================================
-    function masaOlustur() {
+    // 1’den 12’ye kadar masa üretir.
+    // Her masa localStorage kontrolü yapar.
+    for (let i = 1; i <= 12; i++) {
 
-        masaAlani.innerHTML = "";
+        // ======================================================
+        // 📦 LOCALSTORAGE'DAN REZERVASYON VERİSİ ÇEK
+        // ======================================================
+        // Örnek kayıt:
+        // masa_1_rezerv
+        let rezerv = JSON.parse(
+            localStorage.getItem("masa_" + i + "_rezerv")
+        );
 
-        for (let i = 1; i <= 12; i++) {
+        // ======================================================
+        // 🎨 MASA DURUMUNU BELİRLE
+        // ======================================================
+        // Eğer rezerv varsa masa dolu görünür.
+        let durum = rezerv ? "dolu" : "bos";
 
-            let rezerv = JSON.parse(
-                localStorage.getItem("masa_" + i + "_rezerv")
-            );
+        // ======================================================
+        // 📦 MASA KARTI OLUŞTUR
+        // ======================================================
+        let col = document.createElement("div");
+        col.className = "col-md-3 mb-3";
 
-            let durum = rezerv ? "dolu" : "bos";
+        // ======================================================
+        // 🖼 MASA HTML TASARIMI
+        // ======================================================
+        col.innerHTML = `
+            <div class="masa-card ${durum === "bos" ? "masa-bos" : "masa-dolu"}">
 
-            const col = document.createElement("div");
-            col.className = "col-md-3 mb-3";
+                <h5>Masa ${i}</h5>
 
-            col.innerHTML = `
-                <div class="masa-card ${durum === "bos" ? "masa-bos" : "masa-dolu"}"
-                     data-id="${i}">
+                <p>${durum === "bos" ? "BOŞ" : "REZERVE"}</p>
 
-                    <h5>Masa ${i}</h5>
-                    <p>${durum === "bos" ? "BOŞ" : "REZERVE"}</p>
+                ${rezerv ? `
+                    <div class="text-warning small">
 
-                    ${rezerv ? `
-                        <div class="text-warning small">
-                            👤 ${rezerv.adSoyad || rezerv.isim}<br>
-                            👥 ${rezerv.kisi} kişi
-                        </div>
-                        <button class="btn btn-sm btn-danger mt-2"
-                                onclick="rezervIptal(${i})">
-                            İptal Et
-                        </button>
-                    ` : ""}
+                        👤 ${rezerv.adSoyad || rezerv.isim}
 
-                </div>
-            `;
+                        <br>
 
-            masaAlani.appendChild(col);
+                        👥 ${rezerv.kisi} kişi
+
+                    </div>
+
+                    <button class="btn btn-sm btn-danger mt-2"
+                    onclick="rezervIptal(${i})">
+
+                        İptal Et
+
+                    </button>
+                ` : ""}
+
+            </div>
+        `;
+
+        // ======================================================
+        // 📌 MASAYI SAYFAYA EKLE
+        // ======================================================
+        masaAlani.appendChild(col);
+
+        // ======================================================
+        // 🎯 MASA KARTINI SEÇ
+        // ======================================================
+        let card = col.querySelector(".masa-card");
+
+        // ======================================================
+        // 🖱 MASAYA TIKLAMA OLAYI
+        // ======================================================
+        // Kullanıcı masa seçince:
+        // - eski seçim kaldırılır
+        // - yeni masa seçilir
+        // - buton aktif olur
+        card.addEventListener("click", () => {
+
+            // Önce tüm seçili classları kaldır
+            document.querySelectorAll(".masa-card")
+                .forEach(m => m.classList.remove("masa-secili"));
+
+            // Yeni seçilen masaya class ekle
+            card.classList.add("masa-secili");
+
+            // Seçilen masayı kaydet
+            secilenMasa = i;
+
+            // Onay butonunu aktif et
+            secBtn.disabled = false;
+        });
+    }
+
+    // ======================================================
+    // 🟡 MASA REZERVASYON ONAYI
+    // ======================================================
+    // Kullanıcı "Seçilen Masayı Onayla" butonuna basınca çalışır.
+    secBtn.addEventListener("click", () => {
+
+        // Masa seçilmediyse işlem yapma
+        if (!secilenMasa) return;
+
+        // ======================================================
+        // 👤 KULLANICI AD SOYAD AL
+        // ======================================================
+        let isim = prompt("Ad Soyad:");
+
+        // İsim boşsa işlemi durdur
+        if (!isim) {
+            return alert("İsim zorunlu!");
         }
 
-        // tek seferde event binding (PERFORMANS FIX)
-        document.querySelectorAll(".masa-card").forEach(card => {
+        // ======================================================
+        // 👥 KİŞİ SAYISI AL
+        // ======================================================
+        let kisi = prompt("Kişi sayısı:");
 
-            card.addEventListener("click", () => {
+        // Sayı değilse hata ver
+        if (!kisi || isNaN(kisi)) {
+            return alert("Geçerli sayı gir!");
+        }
 
-                document.querySelectorAll(".masa-card")
-                    .forEach(m => m.classList.remove("masa-secili"));
+        // ======================================================
+        // 📦 REZERVASYON OBJESİ OLUŞTUR
+        // ======================================================
+        let data = {
 
-                card.classList.add("masa-secili");
+            // müşteri adı
+            adSoyad: isim,
 
-                secilenMasa = Number(card.dataset.id);
+            // kişi sayısı
+            kisi: Number(kisi),
 
-                if (secBtn) secBtn.disabled = false;
-            });
-        });
-    }
+            // rezervasyon tarihi
+            tarih: new Date().toLocaleString()
+        };
 
-    // ======================================================
-    // 🟡 REZERVASYON ONAY
-    // ======================================================
-    if (secBtn) {
+        // ======================================================
+        // 💾 LOCALSTORAGE'A KAYDET
+        // ======================================================
+        localStorage.setItem(
+            "masa_" + secilenMasa + "_rezerv",
+            JSON.stringify(data)
+        );
 
-        secBtn.addEventListener("click", () => {
+        // ======================================================
+        // ✅ BİLGİ MESAJI
+        // ======================================================
+        alert("Masa rezerve edildi!");
 
-            if (!secilenMasa) return;
+        // ======================================================
+        // 🔄 SAYFAYI YENİLE
+        // ======================================================
+        // Yeni rezervasyon ekranda görünsün diye.
+        location.reload();
+    });
 
-            let isim = prompt("Ad Soyad:");
-            if (!isim) return alert("İsim zorunlu!");
-
-            let kisi = prompt("Kişi sayısı:");
-            if (!kisi || isNaN(kisi)) return alert("Geçerli sayı gir!");
-
-            let data = {
-                adSoyad: isim,
-                kisi: Number(kisi),
-                tarih: new Date().toLocaleString()
-            };
-
-            localStorage.setItem(
-                "masa_" + secilenMasa + "_rezerv",
-                JSON.stringify(data)
-            );
-
-            alert("Masa rezerve edildi!");
-            location.reload();
-        });
-    }
-
-    // ilk yükleme
-    masaOlustur();
 });
 
 
 // ======================================================
-// ❌ REZERVASYON İPTAL
+// ❌ REZERVASYON İPTAL ETME FONKSİYONU
 // ======================================================
-function rezervIptal(masaNo) {
+// Kullanıcı rezervasyonu silmek istediğinde çalışır.
+function rezervIptal(masaNo){
 
-    if (!confirm("Rezervasyonu iptal etmek istiyor musun?")) return;
+    // ======================================================
+    // ⚠️ KULLANICIDAN ONAY AL
+    // ======================================================
+    let onay = confirm(
+        "Rezervasyonu iptal etmek istiyor musun?"
+    );
 
-    localStorage.removeItem("masa_" + masaNo + "_rezerv");
+    // İptal dediyse işlemi durdur
+    if(!onay) return;
 
+    // ======================================================
+    // 🗑 LOCALSTORAGE'DAN SİL
+    // ======================================================
+    localStorage.removeItem(
+        "masa_" + masaNo + "_rezerv"
+    );
+
+    // ======================================================
+    // ✅ MESAJ GÖSTER
+    // ======================================================
     alert("Rezervasyon iptal edildi!");
+
+    // ======================================================
+    // 🔄 SAYFAYI YENİLE
+    // ======================================================
     location.reload();
 }

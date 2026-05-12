@@ -1,98 +1,247 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urban POS - Sipariş</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-   <link rel="stylesheet" href="style.css">
-    
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="p-4">
 
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow" style="background: linear-gradient(90deg,#0f0f0f,#1c1c1c); border-bottom:2px solid #ffc107;">
+<body>
 
-  <div class="container-fluid">
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow"
+        style="background:linear-gradient(90deg,#0f0f0f,#1c1c1c); border-bottom:2px solid #ffc107;">
 
-    <!-- LOGO -->
-    <a class="navbar-brand fw-bold text-warning" href="index.html">
-      🍽 Urban POS
-    </a>
+        <div class="container-fluid">
 
-    <!-- MOBİL BUTON -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+            <a class="navbar-brand fw-bold text-warning" href="index.html">
+                🍽 Urban POS
+            </a>
 
-    <!-- MENÜ -->
-    <div class="collapse navbar-collapse" id="navbarNav">
+            <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
 
-      <ul class="navbar-nav ms-auto align-items-center">
+                <span class="navbar-toggler-icon"></span>
 
-        <li class="nav-item">
-          <a class="nav-link" href="index.html">Ana Sayfa</a>
-        </li>
+            </button>
 
-        <li class="nav-item">
-          <a class="nav-link" href="menu.html">menü</a>
-        </li>
+            <div class="collapse navbar-collapse" id="navbarNav">
 
-        <li class="nav-item">
-          <a class="nav-link" href="tables.html">Masalar</a>
-        </li>
+                <ul class="navbar-nav ms-auto">
 
-        <li class="nav-item">
-          <a class="nav-link" href="order.html">Sipariş</a>
-        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            Ana Sayfa
+                        </a>
+                    </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="report.html">Gün Sonu</a>
-        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="menu.html">
+                            Menü
+                        </a>
+                    </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="products.html">Ürün Yönetimi</a>
-        </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="order.html">
+                            Sipariş
+                        </a>
+                    </li>
 
-      </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html">
+                            Ürün Yönetimi
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            Gün Sonu
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================================
+         ANA ALAN
+    ========================================== -->
+    <div class="container-fluid pt-5 mt-4">
+
+        <div class="row">
+
+            <!-- =========================================
+                 SOL TARAF
+            ========================================== -->
+            <div class="col-lg-8">
+
+                <!-- BAŞLIK -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <h3 id="masaBaslik" class="text-warning mb-0">
+                        Masa Seçiniz
+                    </h3>
+
+                    <button class="btn btn-outline-warning"
+                        onclick="window.location.href='report.html'">
+
+                        📊 Raporlar
+
+                    </button>
+
+                </div>
+
+
+                <!-- =========================================
+                     MASALAR
+                ========================================== -->
+                <h4 class="text-warning mb-3">
+                    Masalar
+                </h4>
+
+                <div class="row mb-5" id="masaAlani"></div>
+
+
+                <!-- =========================================
+                     MENÜ
+                ========================================== -->
+                <h4 class="text-warning mb-3">
+                    Menü
+                </h4>
+
+                <div class="row" id="menuAlani"></div>
+
+            </div>
+
+
+            <!-- =========================================
+                 SAĞ TARAF / SİPARİŞ
+            ========================================== -->
+            <div class="col-lg-4">
+
+                <div class="siparis-box">
+
+                    <h4 class="text-warning">
+                        Sipariş Detayı
+                    </h4>
+
+                    <hr>
+
+                    <div id="siparisListesi">
+
+                        <p class="text-muted">
+                            Henüz sipariş yok
+                        </p>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h5 class="mb-0">
+                            Toplam:
+                        </h5>
+
+                        <h4 class="text-success mb-0">
+                            <span id="toplamTutar">
+                                0
+                            </span>
+                            ₺
+                        </h4>
+
+                    </div>
+
+                    <button class="btn btn-success w-100 mt-4"
+                        onclick="odemeOnay()">
+
+                        💳 Ödeme Al
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
-  </div>
-</nav>
 
-<div class="container" style="margin-right:340px;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 id="masaBaslik" class="text-warning mb-0">Masa Seçiniz</h3>
-        <button class="btn btn-outline-light" onclick="window.location.href='rapor.html'">📊 Raporlar</button>
+
+    <!-- =========================================
+         ÖDEME MODAL
+    ========================================== -->
+    <div class="modal fade" id="odemeModal">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content bg-dark text-white border border-warning p-3">
+
+                <h4 class="text-warning text-center mb-4">
+                    Ödeme Türü
+                </h4>
+
+                <p class="text-center">
+
+                    Toplam Tutar:
+
+                    <span id="modalTutar"
+                        class="text-success fw-bold">
+
+                        0
+
+                    </span>
+
+                    ₺
+
+                </p>
+
+                <div class="d-grid gap-3 mt-3">
+
+                    <button class="pay-btn"
+                        onclick="odemeYap('NAKİT')">
+
+                        💵 Nakit Ödeme
+
+                    </button>
+
+                    <button class="pay-btn"
+                        onclick="odemeYap('KART')">
+
+                        💳 Kart Ödeme
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
-    <div class="row mb-4" id="masaAlani"></div>
 
-    <h4 class="mb-3">Menü</h4>
-    <div class="row" id="menuAlani"></div>
-</div>
 
-<div class="siparis-alani">
-    <h4 class="text-warning">Sipariş</h4>
-    <div id="siparisListesi"></div>
-    <hr>
-    <h5>Toplam: <span id="toplamTutar">0</span> ₺</h5>
-    <button class="btn btn-odeme" onclick="odemeOnay()">ÖDEME AL</button>
-</div>
+    <!-- =========================================
+         JS
+    ========================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<div class="modal fade" id="odemeModal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-3">
-      <h5 class="text-warning text-center mb-3">Ödeme Yöntemi</h5>
-      <p class="text-center">Toplam: <span id="modalTutar" class="text-success fw-bold">0</span> ₺</p>
-      <div class="d-grid gap-3">
-        <button class="pay-btn" onclick="odemeYap('NAKİT')">💵 NAKİT</button>
-        <button class="pay-btn" onclick="odemeYap('KART')">💳 KART</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="storage.js"></script>
-<script src="order.js"></script>
+    <script src="storage.js"></script>
+    <script src="order.js"></script>
 
 </body>
+
 </html>
