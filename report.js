@@ -1,266 +1,203 @@
 // =========================
-// 🚀 SAYFA BAŞLANGICI
+// 🚀 INIT
 // =========================
-// Sayfa açıldığında otomatik çalışır.
-// Bugünün tarihini input içine yerleştirir
-// ve bugüne ait raporları ekrana getirir.
-window.onload = () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-    // Bugünün tarihini alır.
-    let bugun = new Date().toISOString().split('T')[0];
+    const input = document.getElementById("tarihSecici");
 
-    // Tarih inputuna bugünün tarihini yazar.
-    document.getElementById("tarihSecici").value = bugun;
+    const bugun = new Date().toISOString().split("T")[0];
 
-    // Bugünün raporlarını yükler.
+    if (input) input.value = bugun;
+
     raporuYukle(bugun);
-};
+});
 
 
 // =========================
-// 📅 TARİHE GÖRE FİLTRELE
+// 📅 FİLTRE
 // =========================
-// Kullanıcının seçtiği tarihe göre
-// raporları yeniden listeler.
 function tariheGoreFiltrele() {
 
-    // Input içerisindeki seçili tarihi alır.
-    let secilenTarih = document.getElementById("tarihSecici").value;
+    const input = document.getElementById("tarihSecici");
+    if (!input) return;
 
-    // Seçilen tarihe ait raporu getirir.
-    raporuYukle(secilenTarih);
+    raporuYukle(input.value);
 }
 
 
 // =========================
 // 📊 RAPOR YÜKLE
 // =========================
-// localStorage içindeki tüm raporları çeker.
-// Tarihe göre filtreler ve tabloya yazdırır.
 function raporuYukle(filtreTarih) {
 
-    // LocalStorage içindeki rapor verilerini alır.
-    let rapor = JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
+    // 🔥 TEK KAYNAK
+    const rapor =
+        JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
 
-    // HTML elementlerini alır.
-    let tablo = document.getElementById("raporTablosu");
-    let tCiroGosterge = document.getElementById("toplamCiro");
+    const tablo = document.getElementById("raporTablosu");
+    const toplamCiroEl = document.getElementById("toplamCiro");
 
-    // Toplam hesaplama değişkenleri.
-    let toplamCiro = 0;
-    let nakitToplam = 0;
-    let kartToplam = 0;
+    if (!tablo || !toplamCiroEl) return;
 
-    // Ürün analiz sayacı.
-    let urunSayaci = {};
-
-    // Tabloyu temizler.
     tablo.innerHTML = "";
 
-
-    // =========================
-    // 📅 TARİHE GÖRE FİLTRE
-    // =========================
-    // Sadece seçilen tarihteki işlemleri getirir.
-    let gosterilecekVeri = rapor.filter(islem => 
-        islem.tarih === filtreTarih
-    );
+    let toplam = 0;
+    let nakit = 0;
+    let kart = 0;
+    let urunler = {};
 
 
     // =========================
-    // ⚠️ VERİ YOKSA
+    // 🔎 TARİH FİLTRE (SAFE)
     // =========================
-    // Eğer o tarihte işlem yoksa kullanıcıya bilgi verir.
-    if(gosterilecekVeri.length === 0) {
+    const veri = rapor.filter(x => {
+
+        const tarih =
+            (x.tarih || x.paidAt || "").split("T")[0];
+
+        return tarih === filtreTarih;
+    });
+
+
+    // =========================
+    // ❌ VERİ YOK
+    // =========================
+    if (veri.length === 0) {
 
         tablo.innerHTML = `
         <tr>
             <td colspan="4" class="text-center text-muted py-4">
-                Bu tarihte yapılmış bir işlem bulunamadı.
+                Bu tarihte işlem bulunamadı
             </td>
         </tr>`;
+
+        toplamCiroEl.innerText = "0 ₺";
+
+        istatistikGuncelle(0, 0, {}, 0);
+
+        return;
     }
 
 
     // =========================
-    // 📋 RAPOR TABLOSU
+    // 📋 TABLO DOLDUR
     // =========================
-    // İşlemleri tabloya yazdırır.
-    gosterilecekVeri.reverse().forEach(islem => {
+    veri.forEach(x => {
 
-        // Toplam ciro hesaplanır.
-        toplamCiro += Number(islem.tutar);
+        const tutar = Number(x.tutar || x.amount || 0);
 
-        // Nakit / kart ayrımı yapılır.
-        if(islem.tur === 'NAKİT') {
+        toplam += tutar;
 
-            nakitToplam += Number(islem.tutar);
+        const tur = x.tur || x.paymentType || "-";
 
-        } else {
-
-            kartToplam += Number(islem.tutar);
-        }
+        if (tur === "NAKİT") nakit += tutar;
+        else kart += tutar;
 
 
         // =========================
-        // 🍽 ÜRÜN ANALİZİ
+        // 🍽 ÜRÜN SAYACI (SAFE)
         // =========================
-        // Satılan ürünlerin adetlerini sayar.
-        if(islem.urunler && Array.isArray(islem.urunler)) {
+        const items = x.urunler || x.items || [];
 
-            islem.urunler.forEach(u => {
+        if (Array.isArray(items)) {
 
-                urunSayaci[u] = (urunSayaci[u] || 0) + 1;
+            items.forEach(u => {
 
+                const ad = u.ad || u.name || "Bilinmeyen";
+                const adet = u.adet || u.quantity || 1;
+
+                urunler[ad] = (urunler[ad] || 0) + adet;
             });
         }
 
 
         // =========================
-        // 🎨 ÖDEME TÜRÜ RENK
-        // =========================
-        // Nakit ve kart işlemlerine renk verir.
-        let turRengi = islem.tur === 'NAKİT'
-            ? 'text-nakit'
-            : 'text-kart';
-
-
-        // =========================
-        // 🧾 TABLO SATIRI EKLE
+        // 🧾 TABLO SATIRI
         // =========================
         tablo.innerHTML += `
-
         <tr>
-
-            <td>${islem.saat}</td>
-
-            <td>Masa ${islem.masa}</td>
-
-            <td class="tur-metin ${turRengi}">
-                ${islem.tur || "-"}
+            <td>${new Date(x.tarih || x.paidAt).toLocaleTimeString()}</td>
+            <td>Masa ${x.masa || x.tableId || "-"}</td>
+            <td class="${tur === "NAKİT" ? "text-success" : "text-primary"}">
+                ${tur}
             </td>
-
             <td class="text-warning fw-bold">
-                ${islem.tutar} ₺
+                ${tutar} ₺
             </td>
-
         </tr>`;
     });
 
 
-    // =========================
-    // 💰 TOPLAM CİRO GÜNCELLE
-    // =========================
-    tCiroGosterge.innerText = toplamCiro + " ₺";
+    toplamCiroEl.innerText = toplam + " ₺";
 
-
-    // =========================
-    // 📈 İSTATİSTİKLERİ GÜNCELLE
-    // =========================
-    istatistikGuncelle(
-        nakitToplam,
-        kartToplam,
-        urunSayaci,
-        toplamCiro
-    );
+    istatistikGuncelle(nakit, kart, urunler, toplam);
 }
 
 
 // =========================
-// 📈 İSTATİSTİKLERİ GÜNCELLE
+// 📈 İSTATİSTİK
 // =========================
-// Nakit / kart yüzdelerini,
-// en çok satan ürünü ve analizleri hesaplar.
 function istatistikGuncelle(nakit, kart, urunler, toplam) {
 
-    // Progress bar elementleri alınır.
     const nBar = document.getElementById("nakitBar");
     const kBar = document.getElementById("kartBar");
 
+    const nY = document.getElementById("nakitYuzde");
+    const kY = document.getElementById("kartYuzde");
+
+    const enUrun = document.getElementById("enCokSatanUrun");
+    const enAdet = document.getElementById("enCokSatanAdet");
+
 
     // =========================
-    // 💳 NAKİT / KART YÜZDE
+    // 💳 YÜZDE
     // =========================
-    if(toplam > 0) {
+    if (toplam > 0) {
 
-        // Yüzde hesaplama.
-        let nYuzde = (nakit / toplam) * 100;
-        let kYuzde = (kart / toplam) * 100;
+        const n = (nakit / toplam) * 100;
+        const k = (kart / toplam) * 100;
 
-        // Progress bar genişliği ayarlanır.
-        nBar.style.width = nYuzde + "%";
-        kBar.style.width = kYuzde + "%";
+        if (nBar) nBar.style.width = n + "%";
+        if (kBar) kBar.style.width = k + "%";
 
-        // Yüzdeler yazdırılır.
-        document.getElementById("nakitYuzde").innerText =
-            "%" + Math.round(nYuzde);
-
-        document.getElementById("kartYuzde").innerText =
-            "%" + Math.round(kYuzde);
-
-        // Toplam tutarlar yazdırılır.
-        document.getElementById("nakitTutar").innerText = nakit;
-
-        document.getElementById("kartTutar").innerText = kart;
-
+        if (nY) nY.innerText = "%" + Math.round(n);
+        if (kY) kY.innerText = "%" + Math.round(k);
     } else {
 
-        // Veri yoksa barları sıfırlar.
-        nBar.style.width = "0%";
-        kBar.style.width = "0%";
-
-        document.getElementById("nakitYuzde").innerText = "%0";
-        document.getElementById("kartYuzde").innerText = "%0";
+        if (nBar) nBar.style.width = "0%";
+        if (kBar) kBar.style.width = "0%";
     }
 
 
     // =========================
-    // 🔥 EN ÇOK SATAN ÜRÜN
+    // 🔥 EN ÇOK SATAN
     // =========================
-    // En fazla satılan ürünü bulur.
-    let urunDizisi = Object.entries(urunler);
+    const entries = Object.entries(urunler);
 
-    if(urunDizisi.length > 0) {
+    if (entries.length > 0) {
 
-        // Büyükten küçüğe sıralar.
-        let enCokSatan =
-            urunDizisi.sort((a,b) => b[1] - a[1])[0];
+        const en = entries.sort((a, b) => b[1] - a[1])[0];
 
-        // Ürün bilgilerini ekrana yazdırır.
-        document.getElementById("enCokSatanUrun").innerText =
-            enCokSatan[0];
-
-        document.getElementById("enCokSatanAdet").innerText =
-            enCokSatan[1] + " adet satıldı";
+        if (enUrun) enUrun.innerText = en[0];
+        if (enAdet) enAdet.innerText = en[1] + " adet";
 
     } else {
 
-        // Satış yoksa bilgi verir.
-        document.getElementById("enCokSatanUrun").innerText =
-            "Veri Yok";
-
-        document.getElementById("enCokSatanAdet").innerText =
-            "Henüz ürün satışı yok";
+        if (enUrun) enUrun.innerText = "Veri Yok";
+        if (enAdet) enAdet.innerText = "0";
     }
 }
 
 
 // =========================
-// 🗑 TÜM RAPORLARI TEMİZLE
+// 🗑 TEMİZLE
 // =========================
-// Kullanıcıdan onay alır.
-// Tüm gün sonu raporlarını siler.
 function temizle() {
 
-    // Onay kutusu açılır.
-    if(confirm(
-        "DİKKAT! Tüm geçmiş raporlar kalıcı olarak silinecek. Bu işlem geri alınamaz!"
-    )) {
+    if (confirm("Tüm raporlar silinsin mi?")) {
 
-        // LocalStorage içindeki raporları siler.
         localStorage.removeItem("gun_sonu_raporu");
 
-        // Sayfayı yeniler.
         location.reload();
     }
 }

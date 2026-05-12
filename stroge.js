@@ -1,248 +1,218 @@
 // =========================
-// 🔑 DATABASE KEY
+// 🔑 STORAGE KEYS
 // =========================
-// localStorage içerisinde ürünleri saklamak için
-// kullanılan ana veri anahtarıdır.
-const KEY = "urban_products";
+const PRODUCT_KEY = "urban_products";
+const CATEGORY_KEY = "urban_categories";
+const TABLE_KEY = "urban_tables";
+const PAYMENT_KEY = "urban_payments";
 
 
 // =========================
-// 📦 ÜRÜNLERİ GETİR
+// 📥 GENEL STORAGE
 // =========================
-// localStorage içindeki tüm ürünleri okur.
-// Eğer veri yoksa boş dizi döndürür.
-function getProducts(){
+function getData(key, def = []) {
+    try {
+        return JSON.parse(localStorage.getItem(key)) || def;
+    } catch {
+        return def;
+    }
+}
 
-    return JSON.parse(localStorage.getItem(KEY)) || [];
+function setData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+function removeData(key) {
+    localStorage.removeItem(key);
 }
 
 
 // =========================
-// 💾 ÜRÜNLERİ KAYDET
+// 📦 ÜRÜNLER
 // =========================
-// Parametre olarak gelen ürün listesini
-// localStorage içerisine kaydeder.
-function saveProducts(data){
+function getProducts() {
+    return getData(PRODUCT_KEY);
+}
 
-    localStorage.setItem(KEY, JSON.stringify(data));
+function saveProducts(data) {
+    setData(PRODUCT_KEY, data);
 }
 
 
 // =========================
-// ➕ YENİ ÜRÜN EKLE
+// 📂 KATEGORİLER
 // =========================
-// Yeni ürün oluşturur ve localStorage'a kaydeder.
-// Ürün bilgileri:
-// - isim
-// - fiyat
-// - stok
-// - kategori
-function addProduct(name, price, stock, category){
+function getCategories() {
+    return getData(CATEGORY_KEY);
+}
 
-    // Mevcut ürünleri alır.
-    let products = getProducts();
-
-    // Yeni ürün eklenir.
-    products.push({
-
-        // Her ürün için benzersiz ID oluşturur.
-        id: Date.now(),
-
-        // Ürün adı
-        name,
-
-        // Ürün fiyatı
-        price: Number(price),
-
-        // Ürün stoğu
-        stock: Number(stock),
-
-        // Ürün kategorisi
-        category,
-
-        // Stok varsa aktif olur.
-        active: Number(stock) > 0
-    });
-
-    // Güncel ürün listesini kaydeder.
-    saveProducts(products);
+function saveCategories(data) {
+    setData(CATEGORY_KEY, data);
 }
 
 
 // =========================
-// ❌ ÜRÜN SİL
+// 🪑 MASALAR
 // =========================
-// ID bilgisine göre ürünü siler.
-function deleteProduct(id){
+function getTables() {
+    return getData(TABLE_KEY);
+}
 
-    // Silinmeyecek ürünleri filtreler.
-    let products = getProducts()
-        .filter(p => p.id !== id);
-
-    // Güncel listeyi kaydeder.
-    saveProducts(products);
+function saveTables(data) {
+    setData(TABLE_KEY, data);
 }
 
 
 // =========================
-// 📊 ÜRÜN GÜNCELLE
+// 💳 ÖDEMELER
 // =========================
-// Ürün bilgilerini günceller.
-// Sadece gönderilen alanlar değiştirilir.
-function updateProduct(id, data){
+function getPayments() {
+    return getData(PAYMENT_KEY);
+}
 
-    // Tüm ürünleri getirir.
-    let products = getProducts();
-
-    // Güncellenecek ürünü bulur.
-    let p = products.find(x => x.id === id);
-
-    // Ürün bulunamazsa işlemi durdurur.
-    if(!p) return;
-
-
-    // =========================
-    // ✏️ ALAN GÜNCELLEME
-    // =========================
-
-    // Ürün adı güncelle
-    if(data.name !== undefined)
-        p.name = data.name;
-
-    // Fiyat güncelle
-    if(data.price !== undefined)
-        p.price = Number(data.price);
-
-    // Stok güncelle
-    if(data.stock !== undefined)
-        p.stock = Number(data.stock);
-
-    // Kategori güncelle
-    if(data.category !== undefined)
-        p.category = data.category;
-
-
-    // =========================
-    // 🟢 AKTİF / PASİF DURUM
-    // =========================
-    // Stok varsa ürün aktif olur.
-    p.active = p.stock > 0;
-
-    // Güncel listeyi kaydeder.
-    saveProducts(products);
+function savePayments(data) {
+    setData(PAYMENT_KEY, data);
 }
 
 
 // =========================
-// 📉 STOK DÜŞÜR
+// 🌱 SEED DATA
 // =========================
-// Sipariş verildiğinde ürün stoğunu azaltır.
-// Ürün ID ile bulunduğu için daha güvenlidir.
-function decreaseStockById(id, amount = 1){
+function seedData() {
 
-    // Tüm ürünleri getirir.
-    let products = getProducts();
-
-    // ID ile ürün bulur.
-    let p = products.find(x => x.id === id);
-
-    // Ürün bulunamazsa false döndürür.
-    if(!p) return false;
-
-
-    // =========================
-    // ⚠️ STOK KONTROLÜ
-    // =========================
-    // Yeterli stok yoksa işlem iptal edilir.
-    if(p.stock < amount)
-        return false;
-
-
-    // =========================
-    // 📉 STOK AZALT
-    // =========================
-    p.stock -= amount;
-
-
-    // =========================
-    // 🔴 STOK BİTTİ KONTROLÜ
-    // =========================
-    if(p.stock <= 0){
-
-        p.stock = 0;
-
-        p.active = false;
+    // KATEGORİLER
+    if (getCategories().length === 0) {
+        saveCategories([
+            { id: "c_1", name: "Kırmızı Et" },
+            { id: "c_2", name: "İçecek" },
+            { id: "c_3", name: "Tatlı" }
+        ]);
     }
 
+    // ÜRÜNLER
+    if (getProducts().length === 0) {
+        saveProducts([
+            { id: "p_1", name: "Adana Kebap", price: 250, stock: 50, categoryId: "c_1", inStock: true },
+            { id: "p_2", name: "Urfa Kebap", price: 240, stock: 40, categoryId: "c_1", inStock: true },
+            { id: "p_3", name: "Köfte", price: 220, stock: 35, categoryId: "c_1", inStock: true },
 
-    // Güncel listeyi kaydeder.
+            { id: "p_4", name: "Ayran", price: 40, stock: 100, categoryId: "c_2", inStock: true },
+            { id: "p_5", name: "Kola", price: 50, stock: 80, categoryId: "c_2", inStock: true },
+            { id: "p_6", name: "Su", price: 15, stock: 120, categoryId: "c_2", inStock: true },
+
+            { id: "p_7", name: "Künefe", price: 140, stock: 25, categoryId: "c_3", inStock: true },
+            { id: "p_8", name: "Sütlaç", price: 90, stock: 20, categoryId: "c_3", inStock: true },
+            { id: "p_9", name: "Baklava", price: 160, stock: 30, categoryId: "c_3", inStock: true }
+        ]);
+    }
+
+    // MASALAR
+    if (getTables().length === 0) {
+        saveTables([
+            { id: 1, tableNo: 1, status: "empty", orderItems: [] },
+            { id: 2, tableNo: 2, status: "empty", orderItems: [] },
+            { id: 3, tableNo: 3, status: "empty", orderItems: [] }
+        ]);
+    }
+
+    // ÖDEMELER
+    if (getPayments().length === 0) {
+        savePayments([]);
+    }
+}
+
+
+// =========================
+// 📌 KATEGORİ SELECT DOLDUR
+// =========================
+function fillCategorySelect() {
+
+    const select = document.getElementById("kat");
+    if (!select) return;
+
+    let cats = getCategories();
+
+    select.innerHTML = `<option value="">Kategori Seç</option>`;
+
+    cats.forEach(c => {
+        select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+}
+
+
+// =========================
+// ➕ ÜRÜN EKLE
+// =========================
+function addProduct(name, price, stock, categoryId) {
+
+    if (!name || price <= 0 || stock < 0) return;
+
+    let products = getProducts();
+
+    products.push({
+        id: "p_" + Date.now(),
+        name,
+        price: Number(price),
+        stock: Number(stock),
+        categoryId,
+        inStock: Number(stock) > 0
+    });
+
     saveProducts(products);
+}
 
+
+// =========================
+// 🏷 KATEGORİ ADI
+// =========================
+function getCategoryName(id) {
+
+    let cats = getCategories();
+    let c = cats.find(x => x.id === id);
+
+    return c ? c.name : "Bilinmiyor";
+}
+
+
+// =========================
+// 📉 STOK DÜŞ
+// =========================
+function decreaseStock(id, qty = 1) {
+
+    let products = getProducts();
+    let p = products.find(x => x.id === id);
+
+    if (!p || p.stock < qty) return false;
+
+    p.stock -= qty;
+    p.inStock = p.stock > 0;
+
+    saveProducts(products);
     return true;
 }
 
 
 // =========================
-// 📈 STOK ARTTIR
+// 📈 STOK ARTIR
 // =========================
-// Ürün stoğunu manuel artırır.
-function increaseStock(id, amount = 1){
+function increaseStock(id, qty = 1) {
 
-    // Tüm ürünleri getirir.
     let products = getProducts();
-
-    // ID ile ürün bulur.
     let p = products.find(x => x.id === id);
 
-    // Ürün bulunamazsa işlemi durdurur.
-    if(!p) return;
+    if (!p) return;
 
+    p.stock += qty;
+    p.inStock = true;
 
-    // =========================
-    // 📈 STOK EKLE
-    // =========================
-    p.stock += amount;
-
-
-    // Ürün tekrar aktif yapılır.
-    p.active = true;
-
-
-    // Güncel listeyi kaydeder.
     saveProducts(products);
 }
 
 
 // =========================
-// 🍽 MENÜ ÜRÜNLERİ
+// 🚀 INIT
 // =========================
-// Sadece stokta olan aktif ürünleri döndürür.
-// Menü ve sipariş sayfasında kullanılır.
-function getMenuProducts(){
-
-    return getProducts().filter(p =>
-
-        p.active && p.stock > 0
-    );
-}
-
-
-// =========================
-// 🧾 SATIŞ YAP
-// =========================
-// Sipariş ekranında ürün satışı yapar.
-// Stok düşürme işlemini çalıştırır.
-function sellProductById(id, amount = 1){
-
-    return decreaseStockById(id, amount);
-}
-
-
-// =========================
-// 🔥 TÜM ÜRÜNLERİ SIFIRLA
-// =========================
-// localStorage içindeki tüm ürün verilerini siler.
-function clearAllProducts(){
-
-    localStorage.removeItem(KEY);
-}
+document.addEventListener("DOMContentLoaded", () => {
+    seedData();
+    fillCategorySelect();
+});

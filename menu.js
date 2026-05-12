@@ -1,32 +1,50 @@
 // =======================================
-// 📦 ÜRÜNLERİ LOCALSTORAGE'DAN ÇEKER
+// 📦 ÜRÜNLER
 // =======================================
-// Bu fonksiyon tarayıcıda saklanan "urban_products"
-// verisini okur. Eğer veri yoksa boş dizi döner.
-function getProducts(){
+
+function getProducts() {
     return JSON.parse(localStorage.getItem("urban_products")) || [];
 }
 
+// =======================================
+// 📦 KATEGORİLER
+// =======================================
+
+function getCategories() {
+    return JSON.parse(localStorage.getItem("urban_categories")) || [];
+}
 
 // =======================================
-// 📊 MENÜYÜ EKRANA YAZDIRIR
+// 🏷 KATEGORİ BUL (SAFE)
 // =======================================
-// Bu fonksiyon parametre olarak aldığı ürün listesini
-// HTML içine kart olarak basar.
-// Sadece aktif ve stokta olan ürünleri gösterir.
-function renderMenu(list){
 
-    let container = document.getElementById("menu");
+function getCategoryName(id) {
 
-    // Eğer HTML'de menu alanı yoksa hata vermemesi için çık
-    if(!container) return;
+    if (!id) return "Genel";
+
+    let cats = getCategories();
+
+    let cat = cats.find(c => c.id === id);
+
+    return cat ? cat.name : "Genel";
+}
+
+// =======================================
+// 📊 MENÜ RENDER
+// =======================================
+
+function renderMenu(list) {
+
+    // SENDEKİ HTML ID FARKLI OLABİLİR
+    const container =
+        document.getElementById("menuAlani") ||
+        document.getElementById("menu");
+
+    if (!container) return;
 
     let html = "";
 
     list.forEach(p => {
-
-        // Stokta olmayan veya pasif ürünleri gösterme
-        if(!p.active || p.stock <= 0) return;
 
         html += `
         <div class="col-md-3 mb-3">
@@ -38,68 +56,69 @@ function renderMenu(list){
 
                 <br>
 
-                <small class="text-secondary">${p.category}</small>
+                <small class="text-secondary">
+                    ${getCategoryName(p.categoryId || p.category)}
+                </small>
 
                 <br>
 
-                <small class="text-info">Stok: ${p.stock}</small>
+                <small class="text-info">
+                    Stok: ${p.stock}
+                </small>
 
             </div>
         </div>`;
     });
 
-    // Oluşturulan HTML'i sayfaya bas
     container.innerHTML = html;
 }
 
+// =======================================
+// 🔍 FİLTRE
+// =======================================
 
-// =======================================
-// 🔍 KATEGORİYE GÖRE FİLTRELEME YAPAR
-// =======================================
-// Kullanıcı kategori butonuna bastığında çalışır.
-// Seçilen kategoriye göre ürünleri süzer.
-function filterMenu(type){
+function filterMenu(type = "hepsi") {
 
     let data = getProducts();
 
-    // Önce sadece aktif ve stokta olan ürünleri al
-    data = data.filter(p => p.active && p.stock > 0);
+    // SAFE STOCK CHECK (en kritik fix)
+    data = data.filter(p => Number(p.stock) > 0);
 
-    // Eğer "hepsi" seçilmediyse kategoriye göre filtrele
-    if(type !== "hepsi"){
-        data = data.filter(p => p.category === type);
+    if (type !== "hepsi") {
+        data = data.filter(p =>
+            (p.categoryId || p.category) === type
+        );
     }
 
-    // Filtrelenmiş listeyi ekrana bas
     renderMenu(data);
 }
 
-
 // =======================================
-// 🔎 ÜRÜN ARAMA (SEARCH) FONKSİYONU
+// 🔎 SEARCH
 // =======================================
-// Kullanıcı input'a yazdıkça çalışır.
-// Ürün isimlerine göre filtreleme yapar.
-function searchMenu(){
 
-    // Kullanıcının yazdığı metni al (küçük harfe çevir)
-    let q = document.getElementById("search")?.value.toLowerCase() || "";
+function searchMenu() {
 
-    // Ürünleri filtrele
+    let input = document.getElementById("search");
+
+    let q = input ? input.value.toLowerCase() : "";
+
     let data = getProducts()
-        .filter(p => p.active && p.stock > 0) // aktif ve stokta olanlar
-        .filter(p => p.name.toLowerCase().includes(q)); // arama
+        .filter(p => Number(p.stock) > 0)
+        .filter(p =>
+            (p.name || "").toLowerCase().includes(q)
+        );
 
-    // Sonucu ekrana bas
     renderMenu(data);
 }
 
+// =======================================
+// 🚀 INIT
+// =======================================
 
-// =======================================
-// 🚀 SAYFA YÜKLENDİĞİNDE ÇALIŞIR
-// =======================================
-// DOM tamamen yüklendiğinde otomatik olarak
-// tüm ürünleri menüye basar.
 document.addEventListener("DOMContentLoaded", () => {
-    renderMenu(getProducts());
+
+    let data = getProducts().filter(p => Number(p.stock) > 0);
+
+    renderMenu(data);
 });

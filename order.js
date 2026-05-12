@@ -1,241 +1,170 @@
 // =======================================
-// 🍽 AKTİF MASAYI TUTAR
+// 🍽 AKTİF MASA
 // =======================================
-// Kullanıcının seçtiği masayı saklar.
-// Sipariş işlemleri bu değişken üzerinden yapılır.
 let aktifMasa = null;
 
 
 // =======================================
-// 💳 BOOTSTRAP ÖDEME MODALI
+// 💳 MODAL (SAFE INIT)
 // =======================================
-// Ödeme ekranındaki modal yapısını başlatır.
-const modal = new bootstrap.Modal(
-    document.getElementById('odemeModal')
-);
+let modal;
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modalEl = document.getElementById("odemeModal");
+
+    if (modalEl) {
+        modal = new bootstrap.Modal(modalEl);
+    }
+
+    masaOlustur();
+    menuYukle();
+});
 
 
 // =======================================
-// 📦 LOCALSTORAGE'DAN ÜRÜNLERİ ÇEKER
+// 📦 STORAGE
 // =======================================
-// Tarayıcıda kayıtlı ürünleri getirir.
-// Eğer veri yoksa boş dizi döndürür.
-function getProducts(){
 
-    return JSON.parse(
-        localStorage.getItem("urban_products")
-    ) || [];
+function getData(key) {
+    return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+function setData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
 }
 
 
 // =======================================
-// 💾 ÜRÜNLERİ LOCALSTORAGE'A KAYDEDER
+// 📦 ÜRÜNLER
 // =======================================
-// Ürün dizisini localStorage içine kaydeder.
-function saveProducts(data){
 
-    localStorage.setItem(
-        "urban_products",
-        JSON.stringify(data)
-    );
+function getProducts() {
+    return getData("urban_products");
+}
+
+function saveProducts(data) {
+    setData("urban_products", data);
 }
 
 
 // =======================================
-// 🟡 MASA REZERVASYON BİLGİSİNİ GETİRİR
+// 🪑 MASA OLUŞTUR
 // =======================================
-// İlgili masanın rezervasyon bilgilerini döndürür.
-function getRezerv(masaNo){
 
-    return JSON.parse(
-        localStorage.getItem("masa_" + masaNo + "_rezerv")
-    );
-}
+function masaOlustur() {
 
-
-// =======================================
-// 🪑 MASALARI EKRANA OLUŞTURUR
-// =======================================
-// 12 adet masayı dinamik olarak ekrana basar.
-// Masa;
-// - boşsa yeşil
-// - doluysa kırmızı
-// - rezerveli ise sarı görünür.
-function masaOlustur(){
-
-    let alan = document.getElementById("masaAlani");
+    const alan = document.getElementById("masaAlani");
+    if (!alan) return;
 
     alan.innerHTML = "";
 
-    for(let i = 1; i <= 12; i++){
+    for (let i = 1; i <= 12; i++) {
 
-        let siparis = JSON.parse(
-            localStorage.getItem("masa_" + i)
-        ) || [];
+        let siparis = getData("masa_" + i);
 
-        let rezerv = getRezerv(i);
-
-        let durum = "BOŞ";
-        let renk = "bg-success text-white";
-
-        // Rezerveli masa kontrolü
-        if(rezerv){
-
-            durum = "REZERVE";
-            renk = "bg-warning text-dark";
-        }
-
-        // Sipariş varsa masa dolu görünür
-        else if(siparis.length > 0){
-
-            durum = "DOLU";
-            renk = "bg-danger text-white";
-        }
+        let durum = siparis.length > 0 ? "DOLU" : "BOŞ";
+        let renk = siparis.length > 0
+            ? "bg-danger text-white"
+            : "bg-success text-white";
 
         alan.innerHTML += `
         <div class="col-md-2 mb-2">
-
-            <div class="card p-3 text-center ${renk}"
-            onclick="masaSec(${i})">
-
-                <div>Masa ${i}</div>
-
+            <div class="card p-3 text-center ${renk}" onclick="masaSec(${i})">
+                <b>Masa ${i}</b>
                 <small>${durum}</small>
-
-                ${rezerv ? `
-                    <div style="font-size:11px; margin-top:5px;">
-                        👤 ${rezerv.adSoyad}<br>
-                        👥 ${rezerv.kisi} kişi
-                    </div>
-                ` : ""}
-
             </div>
-
         </div>`;
     }
 }
 
 
 // =======================================
-// 🎯 MASA SEÇME İŞLEMİ
+// 🎯 MASA SEÇ
 // =======================================
-// Kullanıcı bir masaya tıkladığında çalışır.
-// Seçilen masayı aktif yapar ve siparişleri gösterir.
-function masaSec(no){
+
+function masaSec(no) {
 
     aktifMasa = no;
 
     document.getElementById("masaBaslik").innerText =
-    "Masa " + no;
+        "Masa " + no;
 
     siparisGoster();
 }
 
 
 // =======================================
-// 🍽 MENÜYÜ EKRANA BASAR
+// 🍽 MENÜ
 // =======================================
-// Aktif ve stokta bulunan ürünleri listeler.
-function menuYukle(){
+
+function menuYukle() {
+
+    const alan = document.getElementById("menuAlani");
+    if (!alan) return;
 
     let urunler = getProducts();
-
-    let alan = document.getElementById("menuAlani");
 
     alan.innerHTML = "";
 
     urunler
-    .filter(u => u.active && u.stock > 0)
+        .filter(u => Number(u.stock) > 0) // 🔥 FIX
+        .forEach(u => {
 
-    .forEach(u => {
+            alan.innerHTML += `
+            <div class="col-md-3 mb-3">
+                <div class="card p-3 text-center">
 
-        alan.innerHTML += `
-        <div class="col-md-3 mb-3">
+                    <b>${u.name}</b>
+                    <div>${u.price} ₺</div>
+                    <small>Stok: ${u.stock}</small>
 
-            <div class="card p-3 text-center">
+                    <button class="btn btn-warning btn-sm mt-2"
+                    onclick="urunEkle('${u.id}')">
+                        EKLE
+                    </button>
 
-                <b>${u.name}</b>
-
-                <div>${u.price} ₺</div>
-
-                <small>Stok: ${u.stock}</small>
-
-                <button
-                class="btn btn-warning btn-sm mt-2"
-                onclick="ekle('${u.name}',${u.price})">
-
-                    EKLE
-
-                </button>
-
-            </div>
-
-        </div>`;
-    });
+                </div>
+            </div>`;
+        });
 }
 
 
 // =======================================
-// 🛒 ÜRÜN EKLE + STOK DÜŞ
+// 🛒 ÜRÜN EKLE
 // =======================================
-// Siparişe ürün ekler.
-// Ürün eklendiğinde stok 1 azalır.
-function ekle(ad, fiyat){
 
-    if(!aktifMasa){
+function urunEkle(id) {
 
-        return alert("Masa seç!");
-    }
+    if (!aktifMasa) return alert("Masa seç!");
 
-    let urunler = getProducts();
+    let products = getProducts();
+    let urun = products.find(x => x.id === id);
 
-    let u = urunler.find(x => x.name === ad);
-
-    // Stok kontrolü
-    if(!u || u.stock <= 0){
-
+    if (!urun || urun.stock <= 0)
         return alert("Stok yok!");
-    }
 
-    // Stok azalt
-    u.stock -= 1;
+    urun.stock -= 1;
 
-    // Stok bittiyse ürünü pasif yap
-    if(u.stock <= 0){
-
-        u.active = false;
-    }
-
-    saveProducts(urunler);
+    saveProducts(products);
 
     let key = "masa_" + aktifMasa;
+    let siparis = getData(key);
 
-    let siparis = JSON.parse(
-        localStorage.getItem(key)
-    ) || [];
+    let item = siparis.find(x => x.id === id);
 
-    let mevcut = siparis.find(x => x.ad === ad);
-
-    // Ürün daha önce eklenmişse adet arttır
-    if(mevcut){
-
-        mevcut.adet++;
-    }
-
-    // İlk kez ekleniyorsa yeni ürün oluştur
-    else{
-
+    if (item) {
+        item.adet++;
+    } else {
         siparis.push({
-            ad,
-            fiyat,
-            adet:1
+            id: urun.id,
+            ad: urun.name,
+            fiyat: urun.price,
+            adet: 1
         });
     }
 
-    localStorage.setItem(
-        key,
-        JSON.stringify(siparis)
-    );
+    setData(key, siparis);
 
     siparisGoster();
     masaOlustur();
@@ -244,21 +173,17 @@ function ekle(ad, fiyat){
 
 
 // =======================================
-// 📋 SİPARİŞLERİ GÖSTERİR
+// 📋 SİPARİŞ GÖSTER
 // =======================================
-// Aktif masanın sipariş listesini ekrana basar.
-// Toplam fiyat hesaplar.
-function siparisGoster(){
 
-    if(!aktifMasa) return;
+function siparisGoster() {
 
-    let key = "masa_" + aktifMasa;
+    if (!aktifMasa) return;
 
-    let siparis = JSON.parse(
-        localStorage.getItem(key)
-    ) || [];
+    let siparis = getData("masa_" + aktifMasa);
 
     let alan = document.getElementById("siparisListesi");
+    if (!alan) return;
 
     let toplam = 0;
 
@@ -270,7 +195,6 @@ function siparisGoster(){
 
         alan.innerHTML += `
         <div class="d-flex justify-content-between border-bottom py-2">
-
             <div>
                 <b>${s.ad}</b><br>
                 ${s.adet} x ${s.fiyat}
@@ -281,169 +205,108 @@ function siparisGoster(){
                 <button onclick="azalt(${i})">-</button>
                 <button onclick="sil(${i})">X</button>
             </div>
-
         </div>`;
     });
 
-    document.getElementById("toplamTutar").innerText =
-    toplam;
+    document.getElementById("toplamTutar").innerText = toplam;
 }
 
 
 // =======================================
-// ➕ ÜRÜN ADETİNİ ARTIRIR
+// ➕ ARTIR
 // =======================================
-// Seçilen sipariş ürününün adetini 1 artırır.
-function arttir(i){
 
-    let key = "masa_" + aktifMasa;
+function arttir(i) {
 
-    let siparis = JSON.parse(
-        localStorage.getItem(key)
-    ) || [];
+    let siparis = getData("masa_" + aktifMasa);
 
     siparis[i].adet++;
 
-    localStorage.setItem(
-        key,
-        JSON.stringify(siparis)
-    );
+    setData("masa_" + aktifMasa, siparis);
 
     siparisGoster();
 }
 
 
 // =======================================
-// ➖ ÜRÜN ADETİNİ AZALTIR
+// ➖ AZALT
 // =======================================
-// Sipariş adedi azaltılır.
-// Adet 0 olursa sipariş silinir.
-function azalt(i){
 
-    let key = "masa_" + aktifMasa;
+function azalt(i) {
 
-    let siparis = JSON.parse(
-        localStorage.getItem(key)
-    ) || [];
+    let siparis = getData("masa_" + aktifMasa);
 
     siparis[i].adet--;
 
-    if(siparis[i].adet <= 0){
+    if (siparis[i].adet <= 0)
+        siparis.splice(i, 1);
 
-        siparis.splice(i,1);
-    }
-
-    localStorage.setItem(
-        key,
-        JSON.stringify(siparis)
-    );
+    setData("masa_" + aktifMasa, siparis);
 
     siparisGoster();
 }
 
 
 // =======================================
-// ❌ SİPARİŞİ TAMAMEN SİLER
+// ❌ SİL
 // =======================================
-// Seçilen ürünü sipariş listesinden kaldırır.
-function sil(i){
 
-    let key = "masa_" + aktifMasa;
+function sil(i) {
 
-    let siparis = JSON.parse(
-        localStorage.getItem(key)
-    ) || [];
+    let siparis = getData("masa_" + aktifMasa);
 
-    siparis.splice(i,1);
+    siparis.splice(i, 1);
 
-    localStorage.setItem(
-        key,
-        JSON.stringify(siparis)
-    );
+    setData("masa_" + aktifMasa, siparis);
 
     siparisGoster();
 }
 
 
 // =======================================
-// 💳 ÖDEME MODALINI AÇAR
+// 💳 ÖDEME
 // =======================================
-// Toplam tutarı modal içine yazdırır.
-function odemeOnay(){
 
-    if(!aktifMasa){
+function odemeOnay() {
 
-        return alert("Masa seç!");
-    }
+    if (!aktifMasa) return alert("Masa seç!");
 
-    let toplam =
-    document.getElementById("toplamTutar").innerText;
+    let toplam = document.getElementById("toplamTutar")?.innerText || 0;
 
-    if(toplam == 0){
+    if (toplam == 0) return alert("Boş masa!");
 
-        return alert("Boş masa!");
-    }
+    document.getElementById("modalTutar").innerText = toplam;
 
-    document.getElementById("modalTutar").innerText =
-    toplam;
-
-    modal.show();
+    modal?.show();
 }
 
 
 // =======================================
-// 💰 ÖDEMEYİ TAMAMLAR
+// 💰 ÖDEME TAMAM
 // =======================================
-// Siparişi gün sonu raporuna ekler,
-// ardından masayı temizler.
-function odemeYap(tip){
 
-    let key = "masa_" + aktifMasa;
+function odemeYap(tip) {
 
-    let siparis = JSON.parse(
-        localStorage.getItem(key)
-    ) || [];
+    let siparis = getData("masa_" + aktifMasa);
 
-    let rapor = JSON.parse(
-        localStorage.getItem("gun_sonu_raporu")
-    ) || [];
+    let rapor = getData("gun_sonu_raporu");
 
     rapor.push({
-
         masa: aktifMasa,
-
         tur: tip,
-
-        tutar:
-        document.getElementById("toplamTutar").innerText,
-
+        tutar: Number(document.getElementById("toplamTutar").innerText),
         urunler: siparis,
-
-        tarih: new Date().toLocaleString()
+        tarih: new Date().toISOString()
     });
 
-    localStorage.setItem(
-        "gun_sonu_raporu",
-        JSON.stringify(rapor)
-    );
+    setData("gun_sonu_raporu", rapor);
 
-    // Masa siparişlerini temizle
-    localStorage.removeItem(key);
+    localStorage.removeItem("masa_" + aktifMasa);
 
-    modal.hide();
+    modal?.hide();
 
     siparisGoster();
     masaOlustur();
 
     alert("Ödeme alındı!");
 }
-
-
-// =======================================
-// 🚀 SAYFA BAŞLANGICI
-// =======================================
-// Sayfa açıldığında:
-// - masaları oluşturur
-// - menüyü yükler
-masaOlustur();
-menuYukle();
