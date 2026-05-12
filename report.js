@@ -1,20 +1,27 @@
 // =========================
-// 🚀 INIT
+// 🚀 SAYFA BAŞLATMA (INIT)
 // =========================
+// Sayfa açıldığında:
+// - tarih input'u bugüne ayarlanır
+// - bugünün raporu otomatik yüklenir
 document.addEventListener("DOMContentLoaded", () => {
 
     const input = document.getElementById("tarihSecici");
+
+    // Bugünün tarihi (YYYY-MM-DD formatında)
     const bugun = new Date().toISOString().split("T")[0];
 
     if (input) input.value = bugun;
 
+    // İlk yükleme
     raporuYukle(bugun);
 });
 
 
 // =========================
-// 📅 FİLTRE
+// 📅 TARİHE GÖRE FİLTRELEME
 // =========================
+// Kullanıcı tarih seçtiğinde raporu filtreler
 function tariheGoreFiltrele() {
 
     const input = document.getElementById("tarihSecici");
@@ -25,8 +32,11 @@ function tariheGoreFiltrele() {
 
 
 // =========================
-// 📊 RAPOR YÜKLE
+// 📊 GÜN SONU RAPOR YÜKLEME
 // =========================
+// localStorage'dan rapor verilerini çeker
+// seçilen tarihe göre filtreler
+// tablo + istatistikleri oluşturur
 function raporuYukle(filtreTarih) {
 
     const rapor = JSON.parse(localStorage.getItem("gun_sonu_raporu")) || [];
@@ -38,15 +48,19 @@ function raporuYukle(filtreTarih) {
 
     tablo.innerHTML = "";
 
+    // =========================
+    // 📊 TOPLAM İSTATİSTİKLER
+    // =========================
     let toplam = 0;
     let nakit = 0;
     let kart = 0;
-    let urunler = {};
+    let urunler = {}; // ürün bazlı satış sayacı
 
 
     // =========================
-    // 🔎 TARİH FİLTRE
+    // 🔎 TARİH FİLTRELEME
     // =========================
+    // Sadece seçilen tarihteki kayıtlar alınır
     const veri = rapor.filter(x => {
         const tarih = (x.tarih || "").split("T")[0];
         return tarih === filtreTarih;
@@ -54,7 +68,7 @@ function raporuYukle(filtreTarih) {
 
 
     // =========================
-    // ❌ VERİ YOK
+    // ❌ VERİ YOKSA
     // =========================
     if (veri.length === 0) {
 
@@ -66,26 +80,31 @@ function raporuYukle(filtreTarih) {
             </tr>`;
 
         toplamCiroEl.innerText = "0 ₺";
+
+        // boş veri için istatistikleri sıfırla
         istatistikGuncelle(0, 0, {}, 0);
         return;
     }
 
 
     // =========================
-    // 📋 RENDER
+    // 📋 RAPOR SATIRLARINI OLUŞTUR
     // =========================
     veri.forEach(x => {
 
         const tutar = Number(x.tutar || 0);
-        const tur = x.tur;
+        const tur = x.tur; // NAKİT / KART
 
         toplam += tutar;
 
+        // ödeme tipine göre ayrım
         if (tur === "NAKİT") nakit += tutar;
         else kart += tutar;
 
 
-        // 🍽 ürün sayacı
+        // =========================
+        // 🍽 ÜRÜN SATIŞ SAYACI
+        // =========================
         (x.urunler || []).forEach(u => {
 
             const ad = u.ad;
@@ -95,6 +114,9 @@ function raporuYukle(filtreTarih) {
         });
 
 
+        // =========================
+        // 📄 TABLO SATIRI
+        // =========================
         tablo.innerHTML += `
         <tr>
             <td>${new Date(x.tarih).toLocaleTimeString()}</td>
@@ -109,15 +131,18 @@ function raporuYukle(filtreTarih) {
     });
 
 
+    // toplam ciro ekrana yazdırılır
     toplamCiroEl.innerText = toplam + " ₺";
 
+    // istatistik paneli güncellenir
     istatistikGuncelle(nakit, kart, urunler, toplam);
 }
 
 
 // =========================
-// 📈 İSTATİSTİK
+// 📈 İSTATİSTİK PANELİ
 // =========================
+// Nakit/kart oranı + en çok satan ürün
 function istatistikGuncelle(nakit, kart, urunler, toplam) {
 
     const nBar = document.getElementById("nakitBar");
@@ -131,7 +156,7 @@ function istatistikGuncelle(nakit, kart, urunler, toplam) {
 
 
     // =========================
-    // 💳 YÜZDE
+    // 💳 NAKİT / KART YÜZDE HESABI
     // =========================
     if (toplam > 0) {
 
@@ -146,6 +171,7 @@ function istatistikGuncelle(nakit, kart, urunler, toplam) {
 
     } else {
 
+        // veri yoksa sıfır göster
         if (nBar) nBar.style.width = "0%";
         if (kBar) kBar.style.width = "0%";
         if (nY) nY.innerText = "%0";
@@ -154,12 +180,13 @@ function istatistikGuncelle(nakit, kart, urunler, toplam) {
 
 
     // =========================
-    // 🔥 EN ÇOK SATAN
+    // 🔥 EN ÇOK SATAN ÜRÜN
     // =========================
     const entries = Object.entries(urunler);
 
     if (entries.length > 0) {
 
+        // en çok satılan ürün bulunur
         const en = entries.sort((a, b) => b[1] - a[1])[0];
 
         if (enUrun) enUrun.innerText = en[0];
@@ -174,8 +201,9 @@ function istatistikGuncelle(nakit, kart, urunler, toplam) {
 
 
 // =========================
-// 🗑 TEMİZLE
+// 🗑 TÜM RAPORU SİL
 // =========================
+// localStorage'daki tüm gün sonu raporunu temizler
 function temizle() {
 
     if (confirm("Tüm raporlar silinsin mi?")) {
