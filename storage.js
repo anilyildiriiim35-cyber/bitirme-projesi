@@ -1,6 +1,7 @@
 // =========================
-// 🔑 KEYS
+// 🔑 KEYS (localStorage anahtarları)
 // =========================
+// Bu sabitler localStorage içinde verilerin hangi isimle saklanacağını belirler
 const PRODUCT_KEY = "urban_products";
 const CATEGORY_KEY = "urban_categories";
 const TABLE_KEY = "urban_tables";
@@ -8,8 +9,14 @@ const PAYMENT_KEY = "urban_payments";
 
 
 // =========================
-// 📦 CORE STORAGE
+// 📦 CORE STORAGE (temel veri işlemleri)
 // =========================
+
+/**
+ * localStorage'dan veri çeker
+ * key: hangi veri (products, tables vs.)
+ * def: veri yoksa dönecek varsayılan değer
+ */
 function getData(key, def = []) {
     try {
         const data = localStorage.getItem(key);
@@ -19,64 +26,85 @@ function getData(key, def = []) {
     }
 }
 
+/**
+ * localStorage'a veri kaydeder
+ * value JSON string'e çevrilerek saklanır
+ */
 function setData(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
 
 // =========================
-// 📦 PRODUCTS
+// 📦 PRODUCTS (ürün işlemleri)
 // =========================
+
+// Ürünleri getirir
 function getProducts() {
     return getData(PRODUCT_KEY);
 }
 
+// Ürünleri kaydeder
 function saveProducts(data) {
     setData(PRODUCT_KEY, data);
 }
 
 
 // =========================
-// 📂 CATEGORIES
+// 📂 CATEGORIES (kategori işlemleri)
 // =========================
+
+// Kategorileri getirir
 function getCategories() {
     return getData(CATEGORY_KEY);
 }
 
+// Kategorileri kaydeder
 function saveCategories(data) {
     setData(CATEGORY_KEY, data);
 }
 
 
 // =========================
-// 🪑 TABLES
+// 🪑 TABLES (masa işlemleri)
 // =========================
+
+// Masaları getirir
 function getTables() {
     return getData(TABLE_KEY);
 }
 
+// Masaları kaydeder
 function saveTables(data) {
     setData(TABLE_KEY, data);
 }
 
 
 // =========================
-// 💳 PAYMENTS
+// 💳 PAYMENTS (ödeme işlemleri)
 // =========================
+
+// Ödemeleri getirir
 function getPayments() {
     return getData(PAYMENT_KEY);
 }
 
+// Ödemeleri kaydeder
 function savePayments(data) {
     setData(PAYMENT_KEY, data);
 }
 
 
 // =========================
-// 🌱 INIT DATA
+// 🌱 INIT DATA (ilk veri oluşturma)
 // =========================
+
+/**
+ * Sistem ilk açıldığında boşsa örnek veri oluşturur
+ */
 function seedData() {
 
+    // kategori yoksa ekler
     if (getCategories().length === 0) {
         saveCategories([
             { id: "c1", name: "Kebap" },
@@ -85,6 +113,7 @@ function seedData() {
         ]);
     }
 
+    // ürün yoksa ekler
     if (getProducts().length === 0) {
         saveProducts([
             { id: "p1", name: "Adana", price: 250, stock: 50, categoryId: "c1", inStock: true },
@@ -93,20 +122,22 @@ function seedData() {
         ]);
     }
 
+    // masa yoksa 12 masa oluşturur
     if (getTables().length === 0) {
         let tables = [];
         for (let i = 1; i <= 12; i++) {
             tables.push({
                 id: i,
                 tableNo: i,
-                status: "empty",
-                customer: null,
-                orderItems: []
+                status: "empty",      // boş masa
+                customer: null,       // müşteri bilgisi
+                orderItems: []        // siparişler
             });
         }
         saveTables(tables);
     }
 
+    // ödeme yoksa boş liste oluşturur
     if (getPayments().length === 0) {
         savePayments([]);
     }
@@ -114,12 +145,15 @@ function seedData() {
 
 
 // =========================
-// 🪑 TABLE FUNCTIONS
+// 🪑 TABLE FUNCTIONS (masa yardımcı fonksiyonlar)
 // =========================
+
+// Tek bir masayı getirir
 function getTable(id) {
     return getTables().find(t => t.id === id);
 }
 
+// Belirli bir masayı günceller
 function saveTable(updated) {
     let tables = getTables();
     tables = tables.map(t => t.id === updated.id ? updated : t);
@@ -128,8 +162,12 @@ function saveTable(updated) {
 
 
 // =========================
-// 🪑 RESERVE TABLE
+// 🪑 RESERVE TABLE (masa rezervasyonu)
 // =========================
+
+/**
+ * Masayı dolu hale getirir ve müşteri ekler
+ */
 function reserveTable(tableId, name, people) {
 
     let tables = getTables();
@@ -149,8 +187,12 @@ function reserveTable(tableId, name, people) {
 
 
 // =========================
-// ❌ CANCEL TABLE
+// ❌ CANCEL TABLE (masa iptali)
 // =========================
+
+/**
+ * Masayı boşaltır ve siparişleri temizler
+ */
 function cancelTable(tableId) {
 
     let tables = getTables();
@@ -167,8 +209,13 @@ function cancelTable(tableId) {
 
 
 // =========================
-// 🛒 ADD ORDER
+// 🛒 ADD ORDER (masaya ürün ekleme)
 // =========================
+
+/**
+ * Masaya ürün ekler
+ * Eğer ürün zaten varsa miktarı artırır
+ */
 function addToTable(tableId, productId) {
 
     let tables = getTables();
@@ -177,6 +224,7 @@ function addToTable(tableId, productId) {
     let table = tables.find(t => t.id === tableId);
     let product = products.find(p => p.id === productId);
 
+    // masa yoksa veya stok yoksa işlem yapma
     if (!table || !product || product.stock <= 0) return;
 
     let item = table.orderItems.find(i => i.productId === productId);
@@ -201,8 +249,13 @@ function addToTable(tableId, productId) {
 
 
 // =========================
-// 📉 STOCK DECREASE
+// 📉 STOCK DECREASE (stok düşürme)
 // =========================
+
+/**
+ * Ürün stok azaltır
+ * stok yeterli değilse false döner
+ */
 function decreaseStock(productId, qty) {
 
     let products = getProducts();
@@ -219,8 +272,13 @@ function decreaseStock(productId, qty) {
 
 
 // =========================
-// 💳 PAYMENT / CHECKOUT
+// 💳 PAYMENT / CHECKOUT (ödeme alma)
 // =========================
+
+/**
+ * Masadaki siparişi ödeme olarak kaydeder
+ * stokları düşer ve masa sıfırlanır
+ */
 function createPayment(tableId, method) {
 
     let tables = getTables();
@@ -228,14 +286,17 @@ function createPayment(tableId, method) {
 
     if (!table || table.orderItems.length === 0) return false;
 
+    // toplam hesaplama
     let total = table.orderItems.reduce((a, b) => a + b.lineTotal, 0);
 
+    // stokları düş
     table.orderItems.forEach(i => {
         decreaseStock(i.productId, i.quantity);
     });
 
     let payments = getPayments();
 
+    // ödeme kaydı oluştur
     payments.push({
         id: "pay_" + Date.now(),
         tableId,
@@ -247,6 +308,7 @@ function createPayment(tableId, method) {
 
     savePayments(payments);
 
+    // masa sıfırla
     table.orderItems = [];
     table.status = "empty";
     table.customer = null;
@@ -258,22 +320,30 @@ function createPayment(tableId, method) {
 
 
 // =========================
-// 🚀 INIT
+// 🚀 INIT (sayfa açılınca çalışır)
 // =========================
-document.addEventListener("DOMContentLoaded", seedData);
-// ======================================================
-// 🔥 REALTIME SYNC FIX (EN KRİTİK PARÇA)
-// ======================================================
 
-// 📡 Masa / sipariş değişince tüm sayfalara haber ver
+// sayfa yüklenince seedData çalışır
+document.addEventListener("DOMContentLoaded", seedData);
+
+
+// =========================
+// 🔥 REALTIME SYNC (sayfalar arası canlı güncelleme)
+// =========================
+
+/**
+ * Diğer sayfalara "veri değişti" sinyali gönderir
+ */
 function triggerTablesUpdate() {
     window.dispatchEvent(new Event("tablesUpdated"));
 }
 
 
-// ======================================================
-// 🪑 REZERVASYON FIX (SENİN reserveTable ÜZERİNE)
-// ======================================================
+// =========================
+// 🪑 FIXED FUNCTIONS (güncellenmiş versiyonlar)
+// =========================
+
+// rezervasyon + sync
 function reserveTable(tableId, name, people) {
 
     let tables = getTables();
@@ -290,13 +360,11 @@ function reserveTable(tableId, name, people) {
 
     saveTables(tables);
 
-    triggerTablesUpdate(); // 🔥 EKLENDİ
+    triggerTablesUpdate(); // diğer sayfalara haber ver
 }
 
 
-// ======================================================
-// ❌ MASA İPTAL FIX
-// ======================================================
+// masa iptal + sync
 function cancelTable(tableId) {
 
     let tables = getTables();
@@ -310,13 +378,11 @@ function cancelTable(tableId) {
 
     saveTables(tables);
 
-    triggerTablesUpdate(); // 🔥 EKLENDİ
+    triggerTablesUpdate();
 }
 
 
-// ======================================================
-// 🛒 ADD ORDER FIX (SİPARİŞ EKLEYİNCE DE GÜNCELLE)
-// ======================================================
+// sipariş ekleme + sync
 function addToTable(tableId, productId) {
 
     let tables = getTables();
@@ -346,13 +412,11 @@ function addToTable(tableId, productId) {
 
     saveTables(tables);
 
-    triggerTablesUpdate(); // 🔥 EKLENDİ
+    triggerTablesUpdate();
 }
 
 
-// ======================================================
-// 💳 PAYMENT FIX
-// ======================================================
+// ödeme + sync
 function createPayment(tableId, method) {
 
     let tables = getTables();
@@ -385,23 +449,25 @@ function createPayment(tableId, method) {
 
     saveTables(tables);
 
-    triggerTablesUpdate(); // 🔥 EKLENDİ
+    triggerTablesUpdate();
 
     return true;
 }
 
 
-// ======================================================
-// 🔄 SİPARİŞ SAYFASI OTOMATİK GÜNCELLE
-// ======================================================
+// =========================
+// 🔄 AUTO UPDATE LISTENER
+// =========================
+
+/**
+ * Başka sayfadan değişiklik gelince UI günceller
+ */
 window.addEventListener("tablesUpdated", () => {
 
-    // masa ekranı varsa güncelle
     if (typeof masaOlustur === "function") {
         masaOlustur();
     }
 
-    // sipariş ekranı varsa güncelle
     if (typeof siparisGoster === "function") {
         siparisGoster();
     }
