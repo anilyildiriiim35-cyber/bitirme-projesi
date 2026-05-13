@@ -8,6 +8,10 @@
     box-sizing:border-box;
 }
 
+html{
+    scroll-behavior:smooth;
+}
+
 body{
     background:linear-gradient(135deg,#0f0f0f,#1c1c1c);
     color:white;
@@ -19,12 +23,11 @@ body{
 /* =========================================
    NAVBAR
 ========================================= */
+
 .navbar{
     z-index:9999;
-    background-color:#1a1a1a; /* <-- şeffaflığı bitirir */
-}
-.navbar{
-    z-index:9999;
+    background-color:#1a1a1a;
+    padding:12px 0;
 }
 
 .btn-hero{
@@ -48,18 +51,27 @@ body{
 
 .hero{
     width:100%;
-    height:100vh;
+    min-height:100vh;
+
     background:
     linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
     url("ChatGPT Image 2 Mar 2026 14_18_07.png");
 
     background-size:cover;
     background-position:center;
+    background-repeat:no-repeat;
 
     display:flex;
     justify-content:center;
     align-items:center;
     text-align:center;
+
+    padding:100px 20px;
+}
+
+.hero-content{
+    width:100%;
+    max-width:900px;
 }
 
 .hero-content h1{
@@ -67,6 +79,7 @@ body{
     font-weight:700;
     margin-bottom:20px;
     color:#ffc107;
+    line-height:1.1;
 }
 
 .hero-content p{
@@ -85,6 +98,7 @@ body{
     border-radius:15px;
     color:white;
     transition:.3s;
+    overflow:hidden;
 }
 
 .card:hover{
@@ -108,6 +122,7 @@ body{
     padding:25px;
     text-align:center;
     border:none;
+    width:100%;
 }
 
 .masa-card:hover{
@@ -125,7 +140,7 @@ body{
 }
 
 .masa-rezerve{
-    background:#0dcaf0;
+    background:#fe6a00;
     color:black;
 }
 
@@ -166,9 +181,11 @@ body{
     top:90px;
 
     width:320px;
+    max-width:calc(100% - 40px);
+
     height:calc(100vh - 110px);
 
-    background:#1c1c1c;
+    background:#ffffff;
 
     border:2px solid #ffc107;
     border-radius:15px;
@@ -177,7 +194,7 @@ body{
 
     overflow-y:auto;
 
-    z-index:1;
+    z-index:100;
 }
 
 .siparis-item{
@@ -204,7 +221,7 @@ body{
     color:black;
     border:none;
     width:100%;
-    padding:10px;
+    padding:12px;
     border-radius:10px;
     font-weight:bold;
     transition:.3s;
@@ -242,6 +259,25 @@ body{
 .pay-btn:hover{
     border-color:#ffc107;
     color:#ffc107;
+}
+
+.reserve-btn{
+    display:inline-block;
+    padding:15px 40px;
+    background:#ffc107;
+    color:black;
+    font-size:20px;
+    font-weight:bold;
+    border-radius:50px;
+    text-decoration:none;
+    transition:.3s;
+    margin-top:20px;
+}
+
+.reserve-btn:hover{
+    background:white;
+    transform:scale(1.05);
+    color:black;
 }
 
 /* =========================================
@@ -284,8 +320,13 @@ select:focus{
    TABLO
 ========================================= */
 
+.table-responsive{
+    overflow-x:auto;
+}
+
 table{
     color:white;
+    min-width:600px;
 }
 
 .table thead{
@@ -314,7 +355,7 @@ table{
 }
 
 /* =========================================
-   RESPONSIVE
+   TABLET
 ========================================= */
 
 @media(max-width:992px){
@@ -322,6 +363,7 @@ table{
     .siparis-alani{
         position:static;
         width:100%;
+        max-width:100%;
         height:auto;
         margin-top:20px;
     }
@@ -330,29 +372,158 @@ table{
         margin-right:0 !important;
     }
 
+    .hero{
+        min-height:auto;
+        padding:120px 20px 80px;
+    }
+
     .hero-content h1{
-        font-size:42px;
+        font-size:48px;
     }
 
     .hero-content p{
         font-size:18px;
     }
 }
-.reserve-btn{
-    display:inline-block;
-    padding:15px 40px;
-    background:#ffc107;
-    color:black;
-    font-size:20px;
-    font-weight:bold;
-    border-radius:50px;
-    text-decoration:none;
-    transition:.3s;
-    margin-top:20px;
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:767px){
+
+    body{
+        overflow-x:hidden;
+    }
+
+    .navbar{
+        padding:10px;
+    }
+
+    .btn-hero{
+        width:100%;
+        padding:12px;
+        font-size:15px;
+    }
+
+    .hero{
+        min-height:auto;
+        padding:130px 20px 80px;
+    }
+
+    .hero-content h1{
+        font-size:34px;
+        line-height:1.2;
+    }
+
+    .hero-content p{
+        font-size:16px;
+        line-height:1.6;
+    }
+
+    #masaAlani{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:15px;
+    }
+
+    .masa-card{
+        padding:18px;
+    }
+
+    #menuAlani .card{
+        min-height:auto;
+    }
+
+    .yemek-adi{
+        font-size:16px;
+        min-height:auto;
+    }
+
+    .fiyat-text{
+        font-size:18px;
+    }
+
+    .siparis-alani{
+
+        position:static;
+
+        width:100%;
+        max-width:100%;
+
+        height:auto;
+
+        margin-top:20px;
+
+        right:auto;
+        top:auto;
+
+        padding:15px;
+    }
+
+    .siparis-item{
+        padding:12px;
+    }
+
+    .btn-ekle,
+    .btn-odeme,
+    .pay-btn{
+        min-height:48px;
+        font-size:15px;
+    }
+
+    .reserve-btn{
+        width:100%;
+        text-align:center;
+        padding:14px;
+        font-size:18px;
+    }
+
+    .report-card{
+        padding:20px;
+    }
+
+    .analiz-card{
+        padding:18px;
+    }
+
+    input,
+    select{
+        font-size:16px !important;
+    }
+
+    table{
+        min-width:500px;
+    }
 }
 
-.reserve-btn:hover{
-    background:white;
-    transform:scale(1.05);
-    color:black;
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media(max-width:480px){
+
+    .hero-content h1{
+        font-size:28px;
+    }
+
+    .hero-content p{
+        font-size:15px;
+    }
+
+    .btn-hero{
+        font-size:14px;
+    }
+
+    .masa-card{
+        padding:15px;
+    }
+
+    .report-card{
+        padding:16px;
+    }
+
+    .analiz-card{
+        padding:15px;
+    }
 }
