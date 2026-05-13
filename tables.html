@@ -14,9 +14,8 @@
 
 <body>
 
-<!-- NAVBAR (aynı bırakıldı) -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow"
-style="background: linear-gradient(90deg,#0f0f0f,#1c1c1c); border-bottom:2px solid #ffc107;">
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top shadow">
 
   <div class="container-fluid">
 
@@ -24,7 +23,11 @@ style="background: linear-gradient(90deg,#0f0f0f,#1c1c1c); border-bottom:2px sol
       🍽 Urban POS
     </a>
 
-    <div class="collapse navbar-collapse">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
 
       <ul class="navbar-nav ms-auto">
 
@@ -33,13 +36,15 @@ style="background: linear-gradient(90deg,#0f0f0f,#1c1c1c); border-bottom:2px sol
         <li class="nav-item"><a class="nav-link" href="tables.html">Masalar</a></li>
         <li class="nav-item"><a class="nav-link" href="order.html">Sipariş</a></li>
         <li class="nav-item"><a class="nav-link" href="report.html">Gün Sonu</a></li>
-        <li class="nav-item"><a class="nav-link" href="products.html">Ürün</a></li>
+        <li class="nav-item"><a class="nav-link active" href="products.html">Ürün Yönetimi</a></li>
 
       </ul>
 
     </div>
+
   </div>
-</nav>
+
+</nav>  
 
 <!-- MASALAR -->
 <div class="container text-center">
@@ -55,14 +60,10 @@ style="background: linear-gradient(90deg,#0f0f0f,#1c1c1c); border-bottom:2px sol
 
 </div>
 
-<!-- SİPARİŞ PANEL -->
-<div class="siparis-panel mt-4 p-3 border border-secondary rounded" id="siparisPanel">
-    <h5 id="panelBaslik" class="text-warning">Siparişler</h5>
-    <hr class="border-secondary">
-    <div id="siparisIcerik"></div>
-</div>
+
 
 <!-- JS -->
+ 
 <script src="storage.js"></script>
 <script src="tables.js"></script>
 

@@ -19,7 +19,10 @@ body{
 /* =========================================
    NAVBAR
 ========================================= */
-
+.navbar{
+    z-index:9999;
+    background-color:#1a1a1a; /* <-- şeffaflığı bitirir */
+}
 .navbar{
     z-index:9999;
 }

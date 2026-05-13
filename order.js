@@ -76,6 +76,9 @@ function masaOlustur() {
             durum = "REZERVE";
             renk = "bg-warning text-dark";
         }
+        else {
+            table.status = "empty";
+        }
 
         setData("urban_tables", tables);
 
@@ -204,6 +207,7 @@ function siparisGoster() {
 
 // =======================================
 // ➕ ➖ ❌
+// =======================================
 function arttir(i) {
     let s = getData("masa_" + aktifMasa);
     s[i].adet++;
@@ -214,15 +218,54 @@ function arttir(i) {
 function azalt(i) {
     let s = getData("masa_" + aktifMasa);
     s[i].adet--;
+
     if (s[i].adet <= 0) s.splice(i, 1);
+
     setData("masa_" + aktifMasa, s);
+
+    // 🔥 masa boş kaldıysa status reset
+    if (s.length === 0) {
+
+        let tables = getData("urban_tables");
+
+        let t = tables.find(x =>
+            Number(x.id) === Number(aktifMasa)
+        );
+
+        if (t) t.status = "empty";
+
+        setData("urban_tables", tables);
+
+        masaOlustur();
+    }
+
     siparisGoster();
 }
 
 function sil(i) {
+
     let s = getData("masa_" + aktifMasa);
+
     s.splice(i, 1);
+
     setData("masa_" + aktifMasa, s);
+
+    // 🔥 tüm sipariş silindiyse masa boşalt
+    if (s.length === 0) {
+
+        let tables = getData("urban_tables");
+
+        let t = tables.find(x =>
+            Number(x.id) === Number(aktifMasa)
+        );
+
+        if (t) t.status = "empty";
+
+        setData("urban_tables", tables);
+
+        masaOlustur();
+    }
+
     siparisGoster();
 }
 
@@ -257,18 +300,93 @@ function odemeYap(tip) {
 
     setData("gun_sonu_raporu", rapor);
 
+    // =======================================
+    // 🔥 MASA SİPARİŞİNİ SİL
+    // =======================================
     localStorage.removeItem("masa_" + aktifMasa);
 
-    // 🔥 FIX: masa reset
+    // =======================================
+    // 🔥 MASAYI BOŞA ÇIKAR (FIX)
+    // =======================================
     let tables = getData("urban_tables");
-    let t = tables.find(x => x.id === aktifMasa);
-    if (t) t.status = "empty";
+
+    let t = tables.find(x =>
+        Number(x.id) === Number(aktifMasa)
+    );
+
+    if (t) {
+        t.status = "empty";
+    }
+
     setData("urban_tables", tables);
+
+    // =======================================
+    // 🔥 EKRANI RESETLE
+    // =======================================
+    aktifMasa = null;
 
     modal?.hide();
 
     masaOlustur();
-    siparisGoster();
+
+    document.getElementById("siparisListesi").innerHTML = "";
+
+    document.getElementById("toplamTutar").innerText = "0";
+
+    document.getElementById("masaBaslik").innerText =
+        "Masa Seçilmedi";
+
+    alert("Ödeme alındı!");
+}
+function odemeYap(tip) {
+
+    let siparis = getData("masa_" + aktifMasa);
+    let rapor = getData("gun_sonu_raporu");
+
+    rapor.push({
+        masa: aktifMasa,
+        tur: tip,
+        tutar: Number(document.getElementById("toplamTutar").innerText),
+        urunler: siparis,
+        tarih: new Date().toISOString()
+    });
+
+    setData("gun_sonu_raporu", rapor);
+
+    // =======================================
+    // 🔥 FULL CLEAN FIX (EKLENDİ)
+    // =======================================
+
+    localStorage.removeItem("masa_" + aktifMasa);
+    localStorage.removeItem("masa_" + aktifMasa + "_rezerv"); // 🔥 KRİTİK FIX
+
+    let tables = getData("urban_tables");
+
+    let t = tables.find(x =>
+        Number(x.id) === Number(aktifMasa)
+    );
+
+    if (t) {
+        t.status = "empty";
+        t.customer = null;   // 🔥 KRİTİK FIX
+    }
+
+    setData("urban_tables", tables);
+
+    // =======================================
+    // 🔥 UI RESET
+    // =======================================
+
+    aktifMasa = null;
+
+    modal?.hide();
+
+    masaOlustur();
+
+    document.getElementById("siparisListesi").innerHTML = "";
+    document.getElementById("toplamTutar").innerText = "0";
+    document.getElementById("masaBaslik").innerText =
+        "Masa Seçilmedi";
 
     alert("Ödeme alındı!");
 }

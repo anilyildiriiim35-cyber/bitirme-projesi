@@ -15,13 +15,37 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================
     for (let i = 1; i <= 12; i++) {
 
-        let rezerv = JSON.parse(localStorage.getItem("masa_" + i + "_rezerv"));
+        let rezerv = JSON.parse(
+            localStorage.getItem("masa_" + i + "_rezerv")
+        );
 
-        let tables = JSON.parse(localStorage.getItem("urban_tables")) || [];
+        let tables = JSON.parse(
+            localStorage.getItem("urban_tables")
+        ) || [];
 
-        let table = tables.find(t => Number(t.id) === Number(i));
+        let table = tables.find(
+            t => Number(t.id) === Number(i)
+        );
 
-        let siparis = JSON.parse(localStorage.getItem("masa_" + i)) || [];
+        let siparis = JSON.parse(
+            localStorage.getItem("masa_" + i)
+        ) || [];
+
+        // =========================
+        // 🔥 FIX 1: GERÇEK TEMİZLEME
+        // sipariş yoksa VE rezerv yoksa masa sıfırlanır
+        // =========================
+        if (siparis.length === 0 && !rezerv && table) {
+
+            table.status = "empty";
+            table.customer = null;
+            table.orderItems = [];
+
+            localStorage.setItem(
+                "urban_tables",
+                JSON.stringify(tables)
+            );
+        }
 
         // =========================
         // 🧠 DURUM MOTORU (FIX)
@@ -31,8 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (siparis.length > 0) {
             durum = "DOLU";
         }
-        else if (table && table.status === "occupied") {
+        else if (rezerv) {
             durum = "REZERVE";
+        }
+        else if (table && table.status === "occupied") {
+            // 🔥 FIX: artık rezerv değil fallback
+            durum = "DOLU";
         }
 
         let col = document.createElement("div");
@@ -84,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =========================
-    // 🟡 REZERVE ET (VALIDATED)
+    // 🟡 REZERVE ET
     // =========================
     secBtn.addEventListener("click", () => {
 
@@ -95,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let kisi = prompt("Kişi sayısı:");
 
-        // 🔥 FIX: sadece tam sayı
         if (!kisi || !/^[0-9]+$/.test(kisi) || Number(kisi) <= 0) {
             return alert("Sadece 1 veya daha büyük tam sayı gir!");
         }
@@ -111,23 +138,36 @@ document.addEventListener("DOMContentLoaded", () => {
             JSON.stringify(data)
         );
 
-        let tables = JSON.parse(localStorage.getItem("urban_tables")) || [];
+        let tables = JSON.parse(
+            localStorage.getItem("urban_tables")
+        ) || [];
 
-        let table = tables.find(t => Number(t.id) === Number(secilenMasa));
+        let table = tables.find(
+            t => Number(t.id) === Number(secilenMasa)
+        );
 
         if (!table) {
+
             tables.push({
                 id: Number(secilenMasa),
                 status: "occupied",
+                customer: data.adSoyad,
                 orderItems: []
             });
+
         } else {
+
             table.status = "occupied";
+            table.customer = data.adSoyad;
         }
 
-        localStorage.setItem("urban_tables", JSON.stringify(tables));
+        localStorage.setItem(
+            "urban_tables",
+            JSON.stringify(tables)
+        );
 
         alert("Masa rezerve edildi!");
+
         location.reload();
     });
 
@@ -135,31 +175,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ======================================================
-// ❌ REZERVASYON İPTAL (FULL FIX)
+// ❌ REZERVASYON İPTAL
 // ======================================================
 function rezervIptal(masaNo) {
 
     let onay = confirm("Rezervasyonu iptal etmek istiyor musun?");
     if (!onay) return;
 
-    // 🗑 rezerv sil
-    localStorage.removeItem("masa_" + masaNo + "_rezerv");
+    localStorage.removeItem(
+        "masa_" + masaNo + "_rezerv"
+    );
 
-    // 🔥 TABLE RESET FIX
-    let tables = JSON.parse(localStorage.getItem("urban_tables")) || [];
+    let tables = JSON.parse(
+        localStorage.getItem("urban_tables")
+    ) || [];
 
-    let table = tables.find(t => Number(t.id) === Number(masaNo));
+    let table = tables.find(
+        t => Number(t.id) === Number(masaNo)
+    );
 
     if (table) {
+
         table.status = "empty";
         table.customer = null;
         table.orderItems = [];
     }
 
-    localStorage.setItem("urban_tables", JSON.stringify(tables));
+    localStorage.setItem(
+        "urban_tables",
+        JSON.stringify(tables)
+    );
 
     alert("Rezervasyon iptal edildi!");
 
-    // 🔥 önemli fix: cache temizlemeden reload
     setTimeout(() => location.reload(), 100);
 }
