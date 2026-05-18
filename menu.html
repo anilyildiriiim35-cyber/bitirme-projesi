@@ -1,69 +1,163 @@
-
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Urban Menü</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
-<body class="p-4">
+<body>
+
 <!-- NAVBAR -->
+
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top shadow">
 
-  <div class="container-fluid">
+    <div class="container-fluid">
 
-    <a class="navbar-brand fw-bold text-warning" href="index.html">
-      🍽 Urban POS
-    </a>
+        <a class="navbar-brand fw-bold text-warning" href="index.html">
+            🍽 Urban POS
+        </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav">
 
-    <div class="collapse navbar-collapse" id="navbarNav">
+            <span class="navbar-toggler-icon"></span>
 
-      <ul class="navbar-nav ms-auto">
+        </button>
 
-        <li class="nav-item"><a class="nav-link" href="index.html">Ana Sayfa</a></li>
-        <li class="nav-item"><a class="nav-link" href="menu.html">Menü</a></li>
-        <li class="nav-item"><a class="nav-link" href="tables.html">Masalar</a></li>
-        <li class="nav-item"><a class="nav-link" href="order.html">Sipariş</a></li>
-        <li class="nav-item"><a class="nav-link" href="report.html">Gün Sonu</a></li>
-        <li class="nav-item"><a class="nav-link active" href="products.html">Ürün Yönetimi</a></li>
+        <div class="collapse navbar-collapse" id="navbarNav">
 
-      </ul>
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Ana Sayfa</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="menu.html">Menü</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="tables.html">Masalar</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="order.html">Sipariş</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="report.html">Gün Sonu</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="products.html">
+                        Ürün Yönetimi
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
 
     </div>
 
-  </div>
+</nav>
 
-</nav>  
+<!-- CONTENT -->
 
+<div class="container py-5 mt-5">
 
-<div class="container">
+    <div class="row">
 
-<h2 class="text-warning mb-3">MENÜ</h2>
+        <div class="col-12">
 
-<input id="search"
-class="form-control search-box mb-3"
-placeholder="Ürün ara..."
-onkeyup="searchMenu()">
+            <h2 class="text-warning mb-4">
+                MENÜ
+            </h2>
 
-<div class="mb-3">
-    <button class="btn btn-warning btn-filter" onclick="filterMenu('hepsi')">Hepsi</button>
-    <button class="btn btn-danger btn-filter" onclick="filterMenu('kirmizi')">Kırmızı Et</button>
-    <button class="btn btn-primary btn-filter" onclick="filterMenu('beyaz')">Beyaz Et</button>
-    <button class="btn btn-success btn-filter" onclick="filterMenu('meze')">Meze</button>
-    <button class="btn btn-info btn-filter" onclick="filterMenu('icecek')">İçecek</button>
+        </div>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="row mb-3">
+
+        <div class="col-12">
+
+            <input
+                id="search"
+                class="form-control search-box"
+                placeholder="Ürün ara..."
+                onkeyup="searchMenu()">
+
+        </div>
+
+    </div>
+
+    <!-- FILTER BUTTONS -->
+
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <div class="d-flex flex-wrap gap-2">
+
+                <button class="btn btn-warning btn-filter"
+                onclick="filterMenu('hepsi')">
+                    Hepsi
+                </button>
+
+                <button class="btn btn-danger btn-filter"
+                onclick="filterMenu('kirmizi')">
+                    Kırmızı Et
+                </button>
+
+                <button class="btn btn-primary btn-filter"
+                onclick="filterMenu('beyaz')">
+                    Beyaz Et
+                </button>
+
+                <button class="btn btn-success btn-filter"
+                onclick="filterMenu('meze')">
+                    Meze
+                </button>
+
+                <button class="btn btn-info btn-filter"
+                onclick="filterMenu('icecek')">
+                    İçecek
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MENU -->
+
+    <div class="row g-4" id="menu"></div>
+
 </div>
 
-<div class="row" id="menu"></div>
-
-</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="storage.js"></script>
+
 <script src="menu.js"></script>
 
 </body>

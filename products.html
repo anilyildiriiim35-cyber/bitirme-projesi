@@ -2,115 +2,276 @@
 <html lang="tr">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Urban POS - Ürün Yönetimi</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top shadow">
 
-  <div class="container-fluid">
+    <div class="container-fluid">
 
-    <a class="navbar-brand fw-bold text-warning" href="index.html">
-      🍽 Urban POS
-    </a>
+        <a class="navbar-brand fw-bold text-warning"
+           href="index.html">
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+            🍽 Urban POS
 
-    <div class="collapse navbar-collapse" id="navbarNav">
+        </a>
 
-      <ul class="navbar-nav ms-auto">
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
 
-        <li class="nav-item"><a class="nav-link" href="index.html">Ana Sayfa</a></li>
-        <li class="nav-item"><a class="nav-link" href="menu.html">Menü</a></li>
-        <li class="nav-item"><a class="nav-link" href="tables.html">Masalar</a></li>
-        <li class="nav-item"><a class="nav-link" href="order.html">Sipariş</a></li>
-        <li class="nav-item"><a class="nav-link" href="report.html">Gün Sonu</a></li>
-        <li class="nav-item"><a class="nav-link active" href="products.html">Ürün Yönetimi</a></li>
+            <span class="navbar-toggler-icon"></span>
 
-      </ul>
+        </button>
+
+        <div class="collapse navbar-collapse"
+             id="navbarNav">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="index.html">
+
+                        Ana Sayfa
+
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="menu.html">
+
+                        Menü
+
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="tables.html">
+
+                        Masalar
+
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="order.html">
+
+                        Sipariş
+
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="report.html">
+
+                        Gün Sonu
+
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active"
+                       href="products.html">
+
+                        Ürün Yönetimi
+
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
 
     </div>
 
-  </div>
-
-</nav>  
+</nav>
 
 
-<div class="container pt-5 mt-5">
+<!-- =========================================
+     PAGE
+========================================= -->
 
-  <h3 class="mb-4 text-warning">🍽 Ürün Yönetimi</h3>
+<div class="container py-5 mt-5">
 
-  <!-- ÜRÜN EKLE -->
-  <div class="card p-4 mb-4">
+    <!-- BAŞLIK -->
 
-    <div class="row g-3">
+    <div class="row mb-4">
 
-      <div class="col-md-3">
-        <input id="ad" class="form-control" placeholder="Ürün adı">
-      </div>
+        <div class="col-12">
 
-      <div class="col-md-2">
-        <input id="fiyat" type="number" class="form-control" placeholder="Fiyat">
-      </div>
+            <h3 class="text-warning">
 
-      <div class="col-md-3">
-        <select id="kat" class="form-select">
-          <option value="">Kategori Seç</option>
-        </select>
-      </div>
+                🍽 Ürün Yönetimi
 
-      <div class="col-md-2">
-        <input id="stok" type="number" class="form-control" placeholder="Stok">
-      </div>
+            </h3>
 
-      <div class="col-md-2">
-        <button class="btn btn-warning w-100" onclick="ekle()">Ekle</button>
-      </div>
+        </div>
 
     </div>
 
-  </div>
+
+    <!-- =========================================
+         ÜRÜN EKLE
+    ========================================== -->
+
+    <div class="card p-4 mb-4">
+
+        <div class="row g-3">
+
+            <!-- ÜRÜN ADI -->
+
+            <div class="col-12 col-md-3">
+
+                <input
+                    id="ad"
+                    class="form-control"
+                    placeholder="Ürün adı">
+
+            </div>
 
 
-  <!-- TABLO -->
-  <div class="card p-3">
+            <!-- FİYAT -->
 
-    <table class="table table-dark table-hover">
+            <div class="col-12 col-md-2">
 
-      <thead>
-        <tr>
-          <th>Ürün</th>
-          <th>Fiyat</th>
-          <th>Kategori</th>
-          <th>Stok</th>
-          <th>İşlem</th>
-        </tr>
-      </thead>
+                <input
+                    id="fiyat"
+                    type="number"
+                    class="form-control"
+                    placeholder="Fiyat">
 
-      <tbody id="liste"></tbody>
+            </div>
 
-    </table>
 
-  </div>
+            <!-- KATEGORİ -->
+
+            <div class="col-12 col-md-3">
+
+                <select
+                    id="kat"
+                    class="form-select">
+
+                    <option value="">
+
+                        Kategori Seç
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- STOK -->
+
+            <div class="col-12 col-md-2">
+
+                <input
+                    id="stok"
+                    type="number"
+                    class="form-control"
+                    placeholder="Stok">
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <div class="col-12 col-md-2">
+
+                <button
+                    class="btn btn-warning w-100 h-100"
+                    onclick="ekle()">
+
+                    Ekle
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         TABLO
+    ========================================== -->
+
+    <div class="card p-3">
+
+        <div class="table-responsive">
+
+            <table class="table table-dark table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Ürün</th>
+
+                        <th>Fiyat</th>
+
+                        <th>Kategori</th>
+
+                        <th>Stok</th>
+
+                        <th>İşlem</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="liste">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
 
 
-<!-- JS -->
+<!-- =========================================
+     JS
+========================================= -->
 
 <script src="storage.js"></script>
+
 <script src="products.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
 
 </body>
+
 </html>
