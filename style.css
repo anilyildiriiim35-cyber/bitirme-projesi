@@ -69,6 +69,10 @@ body{
     padding:100px 20px;
 }
 
+::placeholder {
+    color:#746d6d!important;
+}
+
 .hero-content{
     width:100%;
     max-width:900px;
@@ -102,7 +106,7 @@ body{
 }
 
 .card:hover{
-    transform:translateY(-4px);
+    /* transform:translateY(-4px); */
     border-color:#ffc107;
 }
 
@@ -280,6 +284,14 @@ body{
     color:black;
 }
 
+.form-select {
+    appearance: auto!important;
+    -moz-appearance: auto!important;
+    -webkit-appearance: auto!important;
+    background-image:none!important;
+padding-right:1.75rem!important;
+}
+
 /* =========================================
    RAPOR
 ========================================= */
@@ -303,7 +315,7 @@ body{
    FORM
 ========================================= */
 
-input,
+/* input,
 select{
     background:#111 !important;
     color:white !important;
@@ -314,7 +326,7 @@ input:focus,
 select:focus{
     border-color:#ffc107 !important;
     box-shadow:none !important;
-}
+} */
 
 /* =========================================
    TABLO
@@ -424,11 +436,14 @@ table{
     #masaAlani{
         display:grid;
         grid-template-columns:1fr;
-        gap:15px;
+        gap:0px;
     }
+    .g-4, .gy-4 {
+    --bs-gutter-y: 0px;
+}
 
     .masa-card{
-        padding:18px;
+        padding: 15px;
     }
 
     #menuAlani .card{
@@ -526,4 +541,12 @@ table{
     .analiz-card{
         padding:15px;
     }
+}
+/* Kutuları saran ana element */
+.masalar-konteyner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;       /* Kutuları ortalar */
+    justify-content: flex-start; /* Yukarıdan aşağıya bitişik sıralar */
+    gap: 15px !important;       /* Aralarındaki boşluğu kesin olarak 15px yapar */
 }
