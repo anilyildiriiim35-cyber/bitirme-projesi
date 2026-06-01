@@ -1,15 +1,12 @@
 // =======================================
 // 🧠 LOCALSTORAGE KEY (ÜRÜN VERİ TABANI)
 // =======================================
-// Tüm ürünler bu key altında saklanır
 const KEY = "urban_products";
 
 
 // =======================================
 // 📦 SABİT KATEGORİ LİSTESİ
 // =======================================
-// Ürün ekleme sırasında kullanılacak kategori yapısı
-// (UI select box buradan doldurulur)
 const categories = [
     { id: "kirmizi", name: "Kırmızı Et" },
     { id: "beyaz", name: "Beyaz Et" },
@@ -21,8 +18,6 @@ const categories = [
 // =======================================
 // 📦 ÜRÜN VERİ OKUMA
 // =======================================
-// localStorage'dan ürünleri çeker
-// veri yoksa boş array döner (hata önler)
 function getProducts() {
     return JSON.parse(localStorage.getItem(KEY)) || [];
 }
@@ -31,7 +26,6 @@ function getProducts() {
 // =======================================
 // 💾 ÜRÜN VERİ KAYDETME
 // =======================================
-// Ürün listesini localStorage'a JSON olarak yazar
 function saveProducts(data) {
     localStorage.setItem(KEY, JSON.stringify(data));
 }
@@ -40,8 +34,6 @@ function saveProducts(data) {
 // =======================================
 // 📂 KATEGORİ DROPDOWN DOLDURMA
 // =======================================
-// HTML select (#kat) içine kategorileri basar
-// kullanıcı ürün eklerken kategori seçsin diye
 function loadCategories() {
 
     const select = document.getElementById("kat");
@@ -58,8 +50,6 @@ function loadCategories() {
 // =======================================
 // 📊 ÜRÜN TABLOSU RENDER
 // =======================================
-// Ürünleri HTML tabloya basar
-// Her ürün için satır oluşturur
 function render() {
 
     const table = document.getElementById("liste");
@@ -73,24 +63,52 @@ function render() {
 
         html += `
         <tr>
-            <!-- Ürün adı -->
+
+            <!-- Ürün Adı -->
             <td>${p.name}</td>
 
             <!-- Fiyat -->
-            <td>${p.price} ₺</td>
+            <td>
+                ${p.price} ₺
+                <br>
+                <button
+                    class="btn btn-warning btn-sm mt-1"
+                    onclick="fiyatGuncelle('${p.id}')">
+                    Fiyat Güncelle
+                </button>
+            </td>
 
             <!-- Kategori -->
             <td>${p.category}</td>
 
             <!-- Stok -->
-            <td>${p.stock}</td>
-
-            <!-- Sil butonu -->
             <td>
-                <button class="btn btn-danger btn-sm" onclick="sil('${p.id}')">
+                <button
+                    class="btn btn-secondary btn-sm"
+                    onclick="stokAzalt('${p.id}')">
+                    -
+                </button>
+
+                <strong style="margin:0 8px;">
+                    ${p.stock}
+                </strong>
+
+                <button
+                    class="btn btn-success btn-sm"
+                    onclick="stokArtir('${p.id}')">
+                    +
+                </button>
+            </td>
+
+            <!-- Sil -->
+            <td>
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="sil('${p.id}')">
                     Sil
                 </button>
             </td>
+
         </tr>`;
     });
 
@@ -101,9 +119,6 @@ function render() {
 // =======================================
 // ➕ ÜRÜN EKLEME
 // =======================================
-// Formdan gelen verileri alır
-// doğrulama yapar
-// localStorage'a ekler
 function ekle() {
 
     let ad = document.getElementById("ad").value.trim();
@@ -111,7 +126,6 @@ function ekle() {
     let kat = document.getElementById("kat").value;
     let stok = Number(document.getElementById("stok").value);
 
-    // basit validation (boş veya hatalı giriş kontrolü)
     if (!ad || !fiyat || !kat || stok < 0) {
         alert("Tüm alanları doldur!");
         return;
@@ -119,19 +133,27 @@ function ekle() {
 
     let data = getProducts();
 
-    // yeni ürün eklenir
+    // Aynı ürün kontrolü
+    const urunVar = data.find(
+        p => p.name.toLowerCase() === ad.toLowerCase()
+    );
+
+    if (urunVar) {
+        alert("Bu ürün zaten kayıtlı. Stok veya fiyat güncelleyin.");
+        return;
+    }
+
     data.push({
-        id: Date.now().toString(), // unique id
+        id: Date.now().toString(),
         name: ad,
         price: fiyat,
         category: kat,
         stock: stok,
-        active: true // ileride pasif/aktif kontrolü için
+        active: true
     });
 
     saveProducts(data);
 
-    // form temizleme
     document.getElementById("ad").value = "";
     document.getElementById("fiyat").value = "";
     document.getElementById("stok").value = "";
@@ -143,11 +165,80 @@ function ekle() {
 // =======================================
 // ❌ ÜRÜN SİLME
 // =======================================
-// id'ye göre ürünü listeden çıkarır
-// sonra tekrar kaydeder
 function sil(id) {
 
     let data = getProducts().filter(p => p.id !== id);
+
+    saveProducts(data);
+    render();
+}
+
+
+// =======================================
+// 📈 STOK ARTIR
+// =======================================
+function stokArtir(id) {
+
+    let data = getProducts();
+
+    let urun = data.find(p => p.id === id);
+
+    if (!urun) return;
+
+    urun.stock++;
+
+    saveProducts(data);
+    render();
+}
+
+
+// =======================================
+// 📉 STOK AZALT
+// =======================================
+function stokAzalt(id) {
+
+    let data = getProducts();
+
+    let urun = data.find(p => p.id === id);
+
+    if (!urun) return;
+
+    if (urun.stock > 0) {
+        urun.stock--;
+    }
+
+    saveProducts(data);
+    render();
+}
+
+
+// =======================================
+// 💰 FİYAT GÜNCELLE
+// =======================================
+function fiyatGuncelle(id) {
+
+    let data = getProducts();
+
+    let urun = data.find(p => p.id === id);
+
+    if (!urun) return;
+
+    let yeniFiyat = prompt(
+        `${urun.name} için yeni fiyat giriniz:`,
+        urun.price
+    );
+
+    if (yeniFiyat === null) return;
+
+    yeniFiyat = Number(yeniFiyat);
+
+    if (isNaN(yeniFiyat) || yeniFiyat <= 0) {
+        alert("Geçerli bir fiyat giriniz.");
+        return;
+    }
+
+    urun.price = yeniFiyat;
+
     saveProducts(data);
     render();
 }
@@ -156,9 +247,6 @@ function sil(id) {
 // =======================================
 // 🚀 SAYFA BAŞLATMA
 // =======================================
-// Sayfa açıldığında:
-// - kategori dropdown doldurulur
-// - ürün tablosu yüklenir
 document.addEventListener("DOMContentLoaded", () => {
     loadCategories();
     render();
