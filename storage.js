@@ -114,13 +114,13 @@ function seedData() {
     }
 
     // ürün yoksa ekler
-    if (getProducts().length === 0) {
-        saveProducts([
-            { id: "p1", name: "Adana", price: 250, stock: 50, categoryId: "c1", inStock: true },
-            { id: "p2", name: "Ayran", price: 40, stock: 100, categoryId: "c2", inStock: true },
-            { id: "p3", name: "Baklava", price: 160, stock: 30, categoryId: "c3", inStock: true }
-        ]);
-    }
+   // if (getProducts().length === 0) {
+       // saveProducts([
+          //  { id: "p1", name: "Adana", price: 250, stock: 50, categoryId: "c1", inStock: true },
+          //  { id: "p2", name: "Ayran", price: 40, stock: 100, categoryId: "c2", inStock: true },
+           // { id: "p3", name: "Baklava", price: 160, stock: 30, categoryId: "c3", inStock: true }
+     //   ]);
+   // }//
 
     // masa yoksa 12 masa oluşturur
     if (getTables().length === 0) {
